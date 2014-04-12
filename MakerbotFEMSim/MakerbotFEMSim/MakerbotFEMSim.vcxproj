@@ -150,7 +150,17 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Element.cpp" />
+    <ClCompile Include="ElementMesh.cpp" />
+    <ClCompile Include="HexElement.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NewtonMethodStepper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Element.h" />
+    <ClInclude Include="ElementMesh.h" />
+    <ClInclude Include="HexElement.h" />
+    <ClInclude Include="NewtonMethodStepper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
