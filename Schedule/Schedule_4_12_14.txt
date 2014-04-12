@@ -1,11 +1,10 @@
 Schedule - 4/12/14
 
 Monday              - Finish reading and get idea of organization
-Tuesday             - Meeting to start working on base implementation and work on voxelizer
+Tuesday             - Meeting to start working on base implementation
 Thursday/Friday     - Finish Base implmentation
-Friday(If open lab) - we should go through process of making a matterial model (get an idea of material model)
-Saturday/Sunday     - Presentation/Use case implementation/Voxelizer
-Monday/Tuesday      - Polish presentation/work on final project
-Wednesday           - Finish Voxelizer - finite element simulation (fine if done by Friday)
-Thursday            - Present Flexures with purely elastic material
+Friday(If open lab) - Experiment with material model and redo lab 4
+Saturday/Tudsday    - Presentation/Use case implementation/Voxelizer
+Wednesday           - Polish Presentation
+Thursday            - Lucas Presents (perhaps demo Flexures with purely elastic material)
 
