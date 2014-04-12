@@ -3,9 +3,5 @@
 
 Element::Element(void)
 {
-}
 
-
-Element::~Element(void)
-{
 }

@@ -4,8 +4,3 @@
 ElementMesh::ElementMesh(void)
 {
 }
-
-
-ElementMesh::~ElementMesh(void)
-{
-}

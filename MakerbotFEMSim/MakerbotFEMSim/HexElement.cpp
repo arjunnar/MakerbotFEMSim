@@ -3,9 +3,6 @@
 
 HexElement::HexElement(void)
 {
+
 }
 
-
-HexElement::~HexElement(void)
-{
-}
