@@ -6,12 +6,13 @@
 
 class ElementMesh
 {
+
 public:
 	ElementMesh(void);
 	
-	std::vector<Eigen::Vector3f> coords;
+	std::vector<Eigen::Vector3f> coords; // global shared coordinates 
 
-	std::vector<Element> elements;
+	std::vector<Element*> elements;
 
 	std::vector<Eigen::Vector3f> externalForces;
 

@@ -1,7 +1,8 @@
 #include "Element.h"
 
 
-Element::Element(void)
+Element::Element(std::vector<int> vertices)
 {
+	this->vertices = vertices;
 
 }

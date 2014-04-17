@@ -1,11 +1,17 @@
 #include "NewtonMethodStepper.h"
 
 
-NewtonMethodStepper::NewtonMethodStepper(void)
+NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh)
 {
+	this->mesh = mesh;
 }
 
-
-NewtonMethodStepper::~NewtonMethodStepper(void)
+void NewtonMethodStepper::draw()
 {
+
+}
+
+void NewtonMethodStepper::step()
+{
+
 }

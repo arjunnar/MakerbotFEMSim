@@ -1,8 +1,15 @@
 #pragma once
+
+#include "ElementMesh.h"
+
 class NewtonMethodStepper
 {
 public:
-	NewtonMethodStepper(void);
-	~NewtonMethodStepper(void);
+	NewtonMethodStepper(ElementMesh * mesh);
+	void draw();
+	void step();
+
+private: 
+	ElementMesh * mesh;
 };
 

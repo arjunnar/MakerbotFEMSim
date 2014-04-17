@@ -2,11 +2,12 @@
 
 #include "Element.h"
 
-class HexElement : Element
+class HexElement : public Element
 {
+
 public:
-	HexElement(void);
-	Eigen::MatrixXf stiffnessMatrix(); // from deformation to stiffness
+	HexElement(std::vector<int> vertices);
+	Eigen::MatrixXf stiffnessMatrix(); // from deformation to stiffness?
 	
 private: 
 	Eigen::MatrixXf deformationGradient(int quadPoint); 
