@@ -2,7 +2,7 @@
 #define EXTRA_H
 
 #include <windows.h>
-#include "../freeglut/include/GL/freeglut.h"
+//#include "../freeglut/include/GL/freeglut.h"
 #include "../glut_windows/glut.h"
 
 #ifndef M_PI

@@ -1,9 +1,10 @@
 #include <Eigen/Core>
 #include <iostream>
+#include "ElementMesh.h"
+#include "MeshBuilder.h"
 
 int  main()
 {
-	Eigen::Vector3f x(0,1,2);
-	std::cout << x << std::endl;
-	return 0;
+	ElementMesh * mesh = MeshBuilder::singleCubeMesh();
+
 }
