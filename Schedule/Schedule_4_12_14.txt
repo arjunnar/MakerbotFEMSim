@@ -1,0 +1,10 @@
+Schedule - 4/12/14
+
+Monday              - Finish reading and get idea of organization
+Tuesday             - Meeting to start working on base implementation
+Thursday/Friday     - Finish Base implmentation
+Friday(If open lab) - Experiment with material model and redo lab 4
+Saturday/Tudsday    - Presentation/Use case implementation/Voxelizer
+Wednesday           - Polish Presentation
+Thursday            - Lucas Presents (perhaps demo Flexures with purely elastic material)
+
