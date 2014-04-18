@@ -4,5 +4,6 @@
 Element::Element(std::vector<int> vertices)
 {
 	this->vertices = vertices;
-
 }
+
+

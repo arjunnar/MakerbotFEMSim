@@ -10,8 +10,6 @@ public:
 
 	virtual Eigen::MatrixXf stiffnessMatrix() = 0;
 
-private:
-
-	std::vector<int> vertices; // indexes into global list of coordinate
+	std::vector<int> vertices; // indexes into global list of coordinates
 };
 

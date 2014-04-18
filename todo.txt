@@ -1,9 +1,3 @@
-Issues to Consider
-
-Constraints - how do we enforce constraints between iterations
-How do you go from deformation gradient to stiffness matrix for an element?
-How do you make big stiffnss matrix for all elements in Newton Solver?
-
-
 Things to do: 
 - have a function that builds a grid of cubes 
+- don't repeat lines when rendering hex mesh
