@@ -153,6 +153,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementMesh.cpp" />
+    <ClCompile Include="NeoHookeanModel.cpp" />
     <ClCompile Include="Quadrature.cpp" />
     <ClCompile Include="HexElement.cpp" />
     <ClCompile Include="HexRendering.cpp" />
@@ -172,6 +173,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementMesh.h" />
     <ClInclude Include="extra.h" />
+    <ClInclude Include="NeoHookeanModel.h" />
     <ClInclude Include="Quadrature.h" />
     <ClInclude Include="HexElement.h" />
     <ClInclude Include="HexRendering.h" />
