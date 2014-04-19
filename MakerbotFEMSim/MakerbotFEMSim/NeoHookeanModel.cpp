@@ -1,6 +1,5 @@
 #include "NeoHookeanModel.h"
 
-
 NeoHookeanModel::NeoHookeanModel(float shearModulus, float lame)
 {
 	mu = shearModulus;
@@ -18,9 +17,7 @@ float NeoHookeanModel::getStrainEnergy(Eigen::Matrix3f defGrad)
 
 Eigen::Matrix3f  NeoHookeanModel::firstPiolaStress(const Eigen::Matrix3f defGrad)
 {
-	float J    = log(defGrad.determinant());
+	float J = log(defGrad.determinant());
 	Eigen::Matrix3f invTranspose = defGrad.inverse().transpose();
 	return mu * (defGrad - invTranspose) + lambda * J * invTranspose;
 }
-
-
