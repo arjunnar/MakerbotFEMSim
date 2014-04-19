@@ -21,7 +21,7 @@ Eigen::Matrix3f  NeoHookeanModel::firstPiolaStress(const Eigen::Matrix3f defGrad
 {
 	float J    = log(defGrad.determinant());
 	Eigen::Matrix3f transposed = defGrad.transpose();
-	Eigen::Matrix3f invTranspose = defGrad.inverse();
+	Eigen::Matrix3f invTranspose = transposed.inverse();
 	return mu * (defGrad - invTranspose) + lambda * J * invTranspose;
 }
 
