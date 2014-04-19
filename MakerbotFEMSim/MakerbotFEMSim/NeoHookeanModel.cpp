@@ -20,8 +20,8 @@ float NeoHookeanModel::getStrainEnergy(Eigen::Matrix3f defGrad)
 Eigen::Matrix3f  NeoHookeanModel::firstPiolaStress(Eigen::Matrix3f defGrad)
 {
 	float J    = log(defGrad.determinant());
-	Eigen::Matrix3f transpsose = defGrad.transpose();
-	Eigen::Matrix3f invTranspose = transpsose.computeInverseAndDetWithCheck();
+	//Eigen::Matrix<float, 3,3> transposed = defGrad.transpose();
+	Eigen::Matrix<float, 3,3> invTranspose = defGrad.inverse();
 	return mu * (defGrad - invTranspose) + lambda * J * invTranspose;
 
 }
