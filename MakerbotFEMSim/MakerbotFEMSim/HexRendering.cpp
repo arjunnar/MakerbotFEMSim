@@ -49,9 +49,7 @@ void HexRendering::drawHexMesh(ElementMesh * mesh)
 		drawLine(coord0, coord4);
 		drawLine(coord1, coord5);
 	}
-
 }
-
 
 // helper functions 
 void HexRendering::drawLine(Eigen::Vector3f x0, Eigen::Vector3f x1)
