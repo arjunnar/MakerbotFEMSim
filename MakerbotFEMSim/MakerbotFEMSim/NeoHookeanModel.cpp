@@ -6,7 +6,6 @@ NeoHookeanModel::NeoHookeanModel(float shearModulus, float lame)
 	lambda = lame;
 }
 
-
 float NeoHookeanModel::getStrainEnergy(Eigen::Matrix3f defGrad)
 {
 	float IOne = (defGrad.transpose() * defGrad).trace();
