@@ -1,6 +1,5 @@
 #include "HexRendering.h"
 
-
 void HexRendering::drawHexMesh(ElementMesh * mesh)
 {
 	// draw z coords 

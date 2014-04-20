@@ -41,3 +41,8 @@ Eigen::Matrix3f HexElement::defGradAtQuadPoint(Eigen::Vector3f quadPoint)
 
 	return defGradQuad;
 }
+
+Eigen::VectorXf HexElement::getForce()
+{
+
+}

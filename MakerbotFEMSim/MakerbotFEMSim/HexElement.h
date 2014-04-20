@@ -12,6 +12,7 @@ public:
 	HexElement(std::vector<int> vertices);
 	Eigen::MatrixXf stiffnessMatrix(); // from deformation to stiffness?
 	Eigen::Matrix3f defGradAtQuadPoint(Eigen::Vector3f p);
+    Eigen::VectorXf getForce();
 
 private:
 	Quadrature quadrature;
