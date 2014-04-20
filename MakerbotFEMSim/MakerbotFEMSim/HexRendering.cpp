@@ -3,7 +3,7 @@
 void HexRendering::drawHexMesh(ElementMesh * mesh)
 {
 	// draw z coords 
-	float particleRadius = 0.075f / 10.0f;
+	float particleRadius = 0.075f / 50.0f;
 	for (int ii = 0; ii < mesh->coords.size(); ++ii)
 	{
 		Eigen::Vector3f posParticle = mesh->coords[ii];

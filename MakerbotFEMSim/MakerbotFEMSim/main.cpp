@@ -35,7 +35,7 @@ namespace
 
 		//newtonMethodSystem = new NewtonMethodSystem();
 		//elementMesh = MeshBuilder::buildPendulumMesh(pendulumNumParticles);
-		mesh = MeshBuilder::buildGenericCubeMesh(10,10,10,.1);
+		mesh = MeshBuilder::buildGenericCubeMesh(4,16,4,.1);
     }
 
     void stepSystem()

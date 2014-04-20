@@ -93,12 +93,18 @@ ElementMesh* MeshBuilder::twoStackedCubeMesh()
 
 ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int numZDim, float size)
 {
+	int numLinesXDim = numXDim + 1;
+	int numLinesYDim = numYDim + 1;
+	int numLinesZDim = numZDim + 1;
+
+	int sizeCoordBase = numLinesXDim * numLinesZDim;
+
 	std::vector<Eigen::Vector3f> zCoords;
-	for (int jj = 0; jj < numYDim+1; ++jj) //adding one to get end of last cube
+	for (int jj = 0; jj < numLinesYDim; ++jj) //adding one to get end of last cube
 	{
-		for (int kk = 0; kk < numZDim+1; ++kk)
+		for (int kk = 0; kk < numLinesZDim; ++kk)
 		{
-			for (int ii = 0; ii < numXDim+1; ++ii)
+			for (int ii = 0; ii < numLinesXDim; ++ii)
 			{
 				Eigen::Vector3f coord(ii*size, jj*size, kk*size);
 				zCoords.push_back(coord);
@@ -115,15 +121,16 @@ ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int num
 		{
 			for (int ii = 0; ii < numXDim; ++ii)
 			{
+
 				std::vector<int> vertices;
-				vertices.push_back(ii + (numXDim + 1) * kk + (numXDim + 1) * (numZDim + 1) * jj); // 0
-				vertices.push_back(ii + (numXDim + 1) * (kk+1) + (numXDim + 1) * (numZDim + 1) * jj); // 1
-				vertices.push_back(ii + (numXDim + 1) * kk + (numXDim + 1) * (numZDim + 1) * (jj+1)); // 2
-				vertices.push_back(ii + (numXDim + 1) * (kk+1) + (numXDim + 1) * (numZDim + 1) * (jj+1)); // 3
-				vertices.push_back((ii + 1) + (numXDim + 1) * kk + (numXDim + 1) * (numZDim + 1) * jj); // 4
-				vertices.push_back((ii + 1) + (numXDim + 1) * (kk+1) + (numXDim + 1) * (numZDim + 1) * jj); // 5
-				vertices.push_back((ii + 1) + (numXDim + 1) * kk + (numXDim + 1) * (numZDim + 1) * (jj + 1)); // 6
-				vertices.push_back((ii + 1) + (numXDim + 1) * (kk + 1) + (numXDim + 1) * (numZDim + 1) * (jj + 1)); // 7
+				vertices.push_back(ii + numLinesXDim * kk + sizeCoordBase * jj); // 0
+				vertices.push_back(ii + numLinesXDim * (kk+1) + sizeCoordBase * jj); // 1
+				vertices.push_back(ii + numLinesXDim * kk + sizeCoordBase * (jj+1)); // 2
+				vertices.push_back(ii + numLinesXDim * (kk+1) + sizeCoordBase * (jj+1)); // 3
+				vertices.push_back((ii + 1) + numLinesXDim * kk + sizeCoordBase * jj); // 4
+				vertices.push_back((ii + 1) + numLinesXDim * (kk+1) + sizeCoordBase * jj); // 5
+				vertices.push_back((ii + 1) + numLinesXDim * kk + sizeCoordBase * (jj + 1)); // 6
+				vertices.push_back((ii + 1) + numLinesXDim * (kk + 1) + sizeCoordBase * (jj + 1)); // 7
 
 				//std::cout << "vertex 0: " << vertices[0] << "\n";
 				//std::cout << "vertex 1: " << vertices[1] << "\n";
