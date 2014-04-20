@@ -18,6 +18,5 @@ private:
 	Quadrature quadrature;
 	Eigen::Vector3f refPoints[NVERT];
     int weights[8][3];
-	
 };
 
