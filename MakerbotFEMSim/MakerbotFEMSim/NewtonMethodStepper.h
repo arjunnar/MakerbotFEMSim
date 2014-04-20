@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ElementMesh.h"
+#include "HexElement.h"
 
 class NewtonMethodStepper
 {
@@ -11,5 +12,7 @@ public:
 
 private: 
 	ElementMesh * mesh;
+	Eigen::Vector3f totalExternalForce;
+	Eigen::VectorXf totalForceVector;
 };
 
