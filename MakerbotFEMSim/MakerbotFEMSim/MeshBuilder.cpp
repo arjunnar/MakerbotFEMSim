@@ -91,7 +91,106 @@ ElementMesh* MeshBuilder::twoStackedCubeMesh()
 	return mesh;
 }
 
-
+//ElementMesh* MeshBuilder::buildGenericCubeMesh(float numX, float numY, float numZ)
+//{
+// 
+//	std::vector<Eigen::Vector3f> zCoords;
+//    int verticesPerElement = 8;
+//
+//
+//    float size = 1.0f;
+//
+//	Eigen::Vector3f corner = Eigen::Vector3f::Zero();
+//
+//	std::vector<int> vertices;
+//
+//
+//	std::vector<Element*> elements;
+//
+//    zCoords.push_back(corner); // 0
+//	zCoords.push_back(corner + Eigen::Vector3f(0,0,size)); // 1
+//	zCoords.push_back(corner + Eigen::Vector3f(0,size,0)); // 2
+//	zCoords.push_back(corner + Eigen::Vector3f(0,size,size)); // 3
+//	zCoords.push_back(corner + Eigen::Vector3f(size,0,0)); // 4
+//	zCoords.push_back(corner + Eigen::Vector3f(size,0,size)); // 5
+//	zCoords.push_back(corner + Eigen::Vector3f(size,size,0)); // 6
+//	zCoords.push_back(corner + Eigen::Vector3f(size,size,size)); // 7 
+//
+//	std::vector<int> vertices;
+//	for (int ii = 0; ii < 8; ++ii)
+//	{
+//		vertices.push_back(ii);
+//	}
+//	Element * onlyElem = new HexElement(vertices);
+//	elements.push_back(onlyElem);
+//
+//
+//
+//    int nextCoordIndex = 8;
+//    int totalCoordInCube = 8 + 4 * (numX-1);
+//    int totalCoordInCubeRow = totalCoordInCube * (numY);
+//    for(int kk = 0; kk < numZ; ++kk)
+//    {
+//
+//
+//        for (int jj = 0; jj < numY; ++jj)
+//        {
+//
+//            corner = Eigen::Vector3f(0, size*(jj), size*kk);
+//            nextCoordIndex = 8;
+//            vertices.clear();
+//            if (jj != 0)
+//            {
+//	            //zCoords.push_back(corner); // 0
+//	            //zCoords.push_back(corner + Eigen::Vector3f(0,0,size)); // 1
+//	            zCoords.push_back(corner + Eigen::Vector3f(0,size,0)); // 2
+//	            zCoords.push_back(corner + Eigen::Vector3f(0,size,size)); // 3
+//	            //zCoords.push_back(corner + Eigen::Vector3f(size,0,0)); // 4
+//	           // zCoords.push_back(corner + Eigen::Vector3f(size,0,size)); // 5
+//	            zCoords.push_back(corner + Eigen::Vector3f(size,size,0)); // 6
+//	            zCoords.push_back(corner + Eigen::Vector3f(size,size,size)); // 7 
+//                for (int i = totalCoordInCubeRow*kk + jj*totalCoordInCube; i < 8 + totalCoordInCubeRow*kk + jj*totalCoordInCube; ++i)
+//	            {
+//		            vertices.push_back(i);
+//	            }
+//
+//	            Element * firstElem = new HexElement(vertices);
+//	            elements.push_back(firstElem);
+//            }
+//
+//            for (int ii = 0; ii < numX-1; ++ii)
+//            {
+//         
+//                vertices.clear();
+//                corner += Eigen::Vector3f(size, 0, 0);
+//	            zCoords.push_back(corner + Eigen::Vector3f(size,0,0)); // 4
+//	            zCoords.push_back(corner + Eigen::Vector3f(size,0,size)); // 5
+//	            zCoords.push_back(corner + Eigen::Vector3f(size,size,0)); // 6
+//	            zCoords.push_back(corner + Eigen::Vector3f(size,size,size)); // 7
+//
+//
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex-4);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex-3);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex-2);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex-1);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex+1);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex+2);
+//                vertices.push_back(totalCoordInCubeRow*kk + totalCoordInCube*jj + nextCoordIndex+3);
+//
+//                Element * nextElem = new HexElement(vertices);
+//	            elements.push_back(nextElem); 
+//                nextCoordIndex += 4;
+//            }
+//        }
+//    }
+//    ElementMesh * mesh = new ElementMesh();
+//	mesh->coords = zCoords;
+//	mesh->elements = elements;
+//    
+//	return mesh;
+//
+//}
 
 std::vector<Eigen::Vector3f> MeshBuilder::getCubeVertices(Eigen::Vector3f corner, float size)
 {
