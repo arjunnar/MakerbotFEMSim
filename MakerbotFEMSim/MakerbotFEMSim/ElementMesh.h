@@ -14,7 +14,7 @@ public:
 
 	std::vector<Element*> elements;
 
-	std::vector<Eigen::Vector3f> externalForces;
+	std::vector<Eigen::Vector3f> externalForcesPerVertex;
 
 };
 
