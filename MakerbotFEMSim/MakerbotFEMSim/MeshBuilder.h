@@ -10,7 +10,7 @@ class MeshBuilder
 public: 
 	static ElementMesh* singleCubeMesh();
     static ElementMesh* twoStackedCubeMesh();
-    //static ElementMesh* buildGenericCubeMesh(float numX, float numY, float numZ);
+    static ElementMesh* buildGenericCubeMesh(int numXDim, int numYDim, int numZDim, float size);
 
 private:
 	static std::vector<Eigen::Vector3f> getCubeVertices(Eigen::Vector3f corner, float size);
