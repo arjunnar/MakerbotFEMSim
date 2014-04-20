@@ -52,21 +52,17 @@ Eigen::Vector3f HexElement::getForce(int vertexIndex)
 		Eigen::Vector3f shapeFuncGrad = getShapeFuncGrad(quadPoint, vertexIndex);
 		force += defGrad * shapeFuncGrad;
 	}
+
 	return force;
-
-
-
 }
 
 Eigen::Vector3f HexElement::getShapeFuncGrad(Eigen::Vector3f quadPoint, int ii)
 {
 	Eigen::Vector3f shapeFuncGrad;
 	Eigen::Vector3f fourTimesDiag = 4 * (refPoints[7] - refPoints[0]);
-
 	Eigen::Vector3f shapeFunctionGradMember;
 	shapeFuncGrad(0) = (1+weights[ii][1]*quadPoint(1)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(0);
 	shapeFuncGrad(1) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(1);
 	shapeFuncGrad(2) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][1]*quadPoint(1)) / fourTimesDiag(2);
-
 	return shapeFuncGrad;
 }
