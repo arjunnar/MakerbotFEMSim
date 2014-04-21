@@ -29,7 +29,7 @@ Eigen::MatrixXf HexElement::stiffnessMatrix()
 }
 
 // function to find F_j
-Eigen::Matrix3f HexElement::defGradAtQuadPoint(Eigen::Vector3f quadPoint)
+Eigen::Matrix3f HexElement::defGradAtQuadPoint(std::vector<Eigen::Vector3f> deformedCoords, Eigen::Vector3f quadPoint)
 {
 	Eigen::Matrix3f defGradQuad = Eigen::Matrix3f::Identity();
 	Eigen::Vector3f fourTimesDiag = 4 * (refPoints[7] - refPoints[0]);
@@ -44,20 +44,20 @@ Eigen::Matrix3f HexElement::defGradAtQuadPoint(Eigen::Vector3f quadPoint)
 		shapeFunctionGrad(1) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(1);
 		shapeFunctionGrad(2) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][1]*quadPoint(1)) / fourTimesDiag(2);
 
-		Eigen::MatrixXf defGradContribution = quadPoint * shapeFunctionGrad.transpose();
+		Eigen::MatrixXf defGradContribution = (deformedCoords[ii] - refPoints[ii]) * shapeFunctionGrad.transpose();
 		defGradQuad += defGradContribution;
 	}
 
 	return defGradQuad;
 }
 
-Eigen::Vector3f HexElement::getForce(int vertexIndex)
+Eigen::Vector3f HexElement::getForce(std::vector<Eigen::Vector3f> deformedCoords, int vertexIndex)
 {
 	Eigen::Vector3f force = Eigen::Vector3f(0,0,0);
 	for (int jj = 0; jj < NVERT; ++jj)
 	{
 		Eigen::Vector3f quadPoint = quadrature.gaussCubePoints[jj];
-		Eigen::Matrix3f defGrad = defGradAtQuadPoint(quadPoint);
+		Eigen::Matrix3f defGrad = defGradAtQuadPoint(deformedCoords, quadPoint);
 		//std::cout << "Def grad: " << defGrad << std::endl;
 		Eigen::Vector3f shapeFuncGrad = getShapeFuncGrad(quadPoint, vertexIndex);
 		//std::cout << "Shape func gradient: " << shapeFuncGrad << std::endl;
