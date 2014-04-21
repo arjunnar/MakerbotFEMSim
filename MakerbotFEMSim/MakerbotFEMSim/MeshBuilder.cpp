@@ -1,5 +1,6 @@
 #include "MeshBuilder.h"
 
+/*
 ElementMesh* MeshBuilder::singleCubeMesh()
 {
 	std::vector<Eigen::Vector3f> zCoords;
@@ -31,7 +32,6 @@ ElementMesh* MeshBuilder::singleCubeMesh()
 
 	return mesh;
 }
-
 
 ElementMesh* MeshBuilder::twoStackedCubeMesh()
 {
@@ -90,8 +90,9 @@ ElementMesh* MeshBuilder::twoStackedCubeMesh()
     
 	return mesh;
 }
+*/
 
-ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int numZDim, float size)
+ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int numZDim, float size, std::vector<Eigen::Vector3f> XX)
 {
 	int numLinesXDim = numXDim + 1;
 	int numLinesYDim = numYDim + 1;
@@ -140,26 +141,20 @@ ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int num
 				//std::cout << "vertex 5: " << vertices[5] << "\n";
 				//std::cout << "vertex 6: " << vertices[6] << "\n";
 				//std::cout << "vertex 7: " << vertices[7] << "\n";
-				Element * elem = new HexElement(vertices);
+				Element * elem = new HexElement(vertices, XX);
 				elements.push_back(elem);
 			}
 		}
 	}
-
-
-
-
-
 
 	ElementMesh * mesh = new ElementMesh();
 	mesh->coords = zCoords;
 	mesh->elements = elements;
     
 	return mesh;
-
-
-
 }
+
+/*
 
 std::vector<Eigen::Vector3f> MeshBuilder::getCubeVertices(Eigen::Vector3f corner, float size)
 {
@@ -176,6 +171,7 @@ std::vector<Eigen::Vector3f> MeshBuilder::getCubeVertices(Eigen::Vector3f corner
 
 	return cubeCoords;
 }
+*/
 
 
 

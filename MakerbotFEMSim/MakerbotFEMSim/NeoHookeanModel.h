@@ -2,6 +2,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/LU>
+#include <iostream>
 
 class NeoHookeanModel
 {

@@ -2,6 +2,7 @@
 
 #include "ElementMesh.h"
 #include "HexElement.h"
+#include <iostream>
 
 class NewtonMethodStepper
 {

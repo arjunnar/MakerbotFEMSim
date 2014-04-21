@@ -15,7 +15,8 @@ using namespace std;
 
 // Globals
 int numIters = 0;
-int maxIters = 10;
+int maxIters = 20;
+float cubeSize = 2;
 
 namespace
 {
@@ -29,7 +30,21 @@ namespace
 		//newtonMethodSystem = new NewtonMethodSystem();
 		//elementMesh = MeshBuilder::buildPendulumMesh(pendulumNumParticles);
 		//mesh = MeshBuilder::buildGenericCubeMesh(4,16,4,.1);
-		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,3);
+
+		// build reference coordinates 
+		std::vector<Eigen::Vector3f> refPoints;
+		refPoints.push_back(Eigen::Vector3f::Zero());
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(0,0,cubeSize));
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(0,cubeSize,0));
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(0,cubeSize,cubeSize));
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,0,0));
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,0,cubeSize));
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,cubeSize,0));
+		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
+
+		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,cubeSize, refPoints);
+
+
 		stepper = new NewtonMethodStepper(mesh);
 
     }
