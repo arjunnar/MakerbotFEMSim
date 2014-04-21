@@ -1,7 +1,7 @@
 #include "NeoHookeanModel.h"
 
-const float NeoHookeanModel::mu = 0.5;
-const float NeoHookeanModel::lambda = 0.5;
+const float NeoHookeanModel::mu = 50.0f;
+const float NeoHookeanModel::lambda = 50.0f;
 
 float NeoHookeanModel::getStrainEnergy(Eigen::Matrix3f defGrad)
 {

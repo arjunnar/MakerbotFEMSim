@@ -9,25 +9,18 @@
 #include "ElementMesh.h"
 #include "MeshBuilder.h"
 #include "HexRendering.h"
+#include "NewtonMethodStepper.h"
 
 using namespace std;
 
 // Globals
 int numIters = 0;
-int maxIters = 1000;
-
-bool useStepMode = false;
-bool doStep = false;
-bool start = false; 
-
-int clothDim = 10;
-int pendulumNumParticles = 30;
-
-float admmStiffness = 5.0f; // 1.0f
+int maxIters = 10;
 
 namespace
 {
 	ElementMesh * mesh;
+	NewtonMethodStepper * stepper;
     void initSystem(int argc, char * argv[])
     {
         // Seed the random number generator with the current time
@@ -35,13 +28,20 @@ namespace
 
 		//newtonMethodSystem = new NewtonMethodSystem();
 		//elementMesh = MeshBuilder::buildPendulumMesh(pendulumNumParticles);
-		mesh = MeshBuilder::buildGenericCubeMesh(4,16,4,.1);
+		//mesh = MeshBuilder::buildGenericCubeMesh(4,16,4,.1);
+		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,3);
+		stepper = new NewtonMethodStepper(mesh);
+
     }
 
     void stepSystem()
 	{
+		if (numIters < maxIters)
+		{
+			stepper->step();
+			++numIters;
+		}
     }
-
 
      void drawSystem()
 	 {
@@ -77,19 +77,6 @@ namespace
                 exit(0);
                 break;
             }
-
-			case 'g': 
-				if (!useStepMode && !start)
-				{
-					start = true; 
-				}
-
-            case 's':
-				if (useStepMode)
-				{
-            		doStep = true;
-				}
-            	break;
 
             default:
                 cout << "Unhandled key press " << key << "." << endl;

@@ -13,6 +13,5 @@ public:
 private: 
 	ElementMesh * mesh;
 	Eigen::Vector3f totalExternalForce;
-	Eigen::VectorXf totalForceVector;
 };
 

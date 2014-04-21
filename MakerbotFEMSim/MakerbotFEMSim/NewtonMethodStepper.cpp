@@ -42,6 +42,12 @@ void NewtonMethodStepper::step()
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
 		Eigen::Vector3f force = totalForceVector.block(3*sharedCoordI, 0, 3, 1);
-		mesh->coords[sharedCoordI] += 0.01*force;
+
+		if (sharedCoordI == 0 || sharedCoordI == 1 || sharedCoordI == 2 || sharedCoordI == 3)
+		{
+			continue;
+		}
+
+		mesh->coords[sharedCoordI] += 0.0001*force;
 	}
 }
