@@ -2,6 +2,7 @@
 
 #include "Element.h"
 #include "Quadrature.h"
+#include "NeoHookeanModel.h"
 
 //#define NVERT 8
 

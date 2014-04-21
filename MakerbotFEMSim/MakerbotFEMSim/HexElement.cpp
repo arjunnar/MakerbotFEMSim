@@ -19,7 +19,7 @@ HexElement::HexElement(std::vector<int> vertices) : Element(vertices)
 Eigen::MatrixXf HexElement::stiffnessMatrix()
 {
 	//return NULL;
-	return Eigen::Matrix3f();
+	return Eigen::MatrixXf();
 }
 
 // function to find F_j
@@ -50,7 +50,7 @@ Eigen::Vector3f HexElement::getForce(int vertexIndex)
 		Eigen::Vector3f quadPoint = quadrature.gaussCubePoints[jj];
 		Eigen::Matrix3f defGrad = defGradAtQuadPoint(quadPoint);
 		Eigen::Vector3f shapeFuncGrad = getShapeFuncGrad(quadPoint, vertexIndex);
-		force += defGrad * shapeFuncGrad;
+		force -= NeoHookeanModel::firstPiolaStress(defGrad) * shapeFuncGrad;
 	}
 
 	return force;
