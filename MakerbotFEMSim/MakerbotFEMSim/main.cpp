@@ -42,7 +42,7 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,cubeSize,0));
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
-		mesh = MeshBuilder::buildGenericCubeMesh(1,4,1,cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(2,4,2,cubeSize, refPoints);
 
 
 		stepper = new NewtonMethodStepper(mesh);
