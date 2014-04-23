@@ -15,7 +15,7 @@ using namespace std;
 
 // Globals
 int numIters = 0;
-int maxIters = 20;
+int maxIters = 500;
 float cubeSize = 2;
 
 namespace
@@ -42,7 +42,7 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,cubeSize,0));
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
-		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(1,4,1,cubeSize, refPoints);
 
 
 		stepper = new NewtonMethodStepper(mesh);

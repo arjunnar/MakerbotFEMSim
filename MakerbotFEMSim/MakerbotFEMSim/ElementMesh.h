@@ -2,6 +2,7 @@
 
 #include "Element.h"
 #include <vector>
+#include <set>
 #include <Eigen/Core>
 
 class ElementMesh
@@ -15,6 +16,8 @@ public:
 	std::vector<Element*> elements;
 
 	std::vector<Eigen::Vector3f> externalForcesPerVertex;
+	
+	std::set<int> sharedIndexBase;
 
 };
 

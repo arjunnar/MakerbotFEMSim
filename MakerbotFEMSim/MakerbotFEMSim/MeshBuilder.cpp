@@ -146,11 +146,17 @@ ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int num
 			}
 		}
 	}
+	std::set<int> sharedIndexBase;
+	for (int ii = 0; ii < sizeCoordBase ; ++ii)
+	{
+		sharedIndexBase.insert(ii);
+	}
 
 	ElementMesh * mesh = new ElementMesh();
 	mesh->coords = zCoords;
 	mesh->elements = elements;
-    
+    mesh->sharedIndexBase = sharedIndexBase;
+
 	return mesh;
 }
 
