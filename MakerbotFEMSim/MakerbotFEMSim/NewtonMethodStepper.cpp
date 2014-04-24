@@ -5,7 +5,7 @@ NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh)
 {
 	this->mesh = mesh;
 	totalExternalForce = Eigen::Vector3f::Zero();
-	Eigen::Vector3f force(-100,00,0);
+	Eigen::Vector3f force(00,00,0);
 	mesh->externalForcesPerVertex.push_back(force);
 	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
 	{
