@@ -122,7 +122,7 @@ ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int num
 		{
 			for (int ii = 0; ii < numXDim; ++ii)
 			{
-
+				
 				std::vector<int> vertices;
 				vertices.push_back(ii + numLinesXDim * kk + sizeCoordBase * jj); // 0
 				vertices.push_back(ii + numLinesXDim * (kk+1) + sizeCoordBase * jj); // 1
@@ -141,7 +141,7 @@ ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int num
 				//std::cout << "vertex 5: " << vertices[5] << "\n";
 				//std::cout << "vertex 6: " << vertices[6] << "\n";
 				//std::cout << "vertex 7: " << vertices[7] << "\n";
-				Element * elem = new HexElement(vertices, XX);
+				Element * elem = new HexElement(vertices, XX, Eigen::Vector3f::Zero());
 				elements.push_back(elem);
 			}
 		}

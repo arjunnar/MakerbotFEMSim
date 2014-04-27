@@ -5,7 +5,7 @@ NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh)
 {
 	this->mesh = mesh;
 	totalExternalForce = Eigen::Vector3f::Zero();
-	Eigen::Vector3f force(00,00,0);
+	Eigen::Vector3f force(.2,0,0);
 	mesh->externalForcesPerVertex.push_back(force);
 	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
 	{
@@ -33,7 +33,7 @@ void NewtonMethodStepper::step()
 		}
 	}
 
-	//std::cout << "Initial total force vector: " << totalForceVector << std::endl;
+//	std::cout << "Initial total force vector: " << totalForceVector << std::endl;
 
 	for (int elementI = 0; elementI < mesh->elements.size(); ++elementI)
 	{
@@ -52,10 +52,15 @@ void NewtonMethodStepper::step()
 			{
 				continue;
 			}
-
 			Eigen::Vector3f forceOnVertex = elem->getForce(elemDeformedCoords, ii);
-		//	std::cout << "Force on vertex " << ii << ": " << forceOnVertex << std::endl;
-			
+
+	//		if (elementI == 1 && ii==7) 
+//			{
+
+				//std::cout << std::endl;
+	//			std::cout << "Force on vertex " << ii << ": " << forceOnVertex << std::endl;
+//			}
+
 			totalForceVector.block(3*sharedCoordIndex, 0, 3, 1) = totalForceVector.block(3*sharedCoordIndex, 0, 3, 1) + forceOnVertex;
 		}
 	}
@@ -72,6 +77,6 @@ void NewtonMethodStepper::step()
 			continue;
 		}
 
-		mesh->coords[sharedCoordI] += 0.0001*force;
+		mesh->coords[sharedCoordI] += 0.01*force;
 	}
 }

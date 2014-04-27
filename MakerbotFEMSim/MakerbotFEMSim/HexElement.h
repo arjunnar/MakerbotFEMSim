@@ -12,7 +12,7 @@ class HexElement : public Element
 {
 
 public:
-	HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> XX);
+	HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> XX, Eigen::Vector3f corner);
 	Eigen::MatrixXf stiffnessMatrix(); // from deformation to stiffness?
 	Eigen::Matrix3f defGradAtQuadPoint(std::vector<Eigen::Vector3f> deformedCoords, Eigen::Vector3f p);
 	Eigen::Vector3f getForce(std::vector<Eigen::Vector3f> deformedCoords, int vertexIndex);

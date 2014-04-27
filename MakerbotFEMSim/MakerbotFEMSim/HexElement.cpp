@@ -1,12 +1,12 @@
 #include "HexElement.h"
 
 
-HexElement::HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> XX) : Element(vertices)
+HexElement::HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> XX, Eigen::Vector3f corner) : Element(vertices)
 {
 	// initialize weights matrix
 	 weights[0][0] = -1; weights[0][1] = -1; weights[0][2] = -1; 
 	 weights[1][0] = -1; weights[1][1] = -1; weights[1][2] = 1; 
-	 weights[2][0] = -1; weights[2][1] = 1; weights[2][2] = 1; 
+	 weights[2][0] = -1; weights[2][1] = 1; weights[2][2] = -1; 
 	 weights[3][0] = -1; weights[3][1] = 1; weights[3][2] = 1; 			
 	 weights[4][0] = 1; weights[4][1] = -1; weights[4][2] = -1; 
 	 weights[5][0] = 1; weights[5][1] = -1; weights[5][2] = 1; 
@@ -15,6 +15,12 @@ HexElement::HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> X
 
 	// initialize cube in reference space 
 	 this->refPoints = XX;
+
+
+	 for (int ii = 0; ii < NVERT; ++ii)
+	 {
+		 refPoints[ii] = refPoints[ii] + corner;
+	 }
 
 	 for (int i = 0; i < NVERT; ++i)
 	 {
@@ -40,9 +46,9 @@ Eigen::Matrix3f HexElement::defGradAtQuadPoint(std::vector<Eigen::Vector3f> defo
 	for (int ii = 0; ii < NVERT; ++ii)
 	{
 		Eigen::Vector3f shapeFunctionGrad;
-		shapeFunctionGrad(0) = (1+weights[ii][1]*quadPoint(1)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(0);
-		shapeFunctionGrad(1) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(1);
-		shapeFunctionGrad(2) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][1]*quadPoint(1)) / fourTimesDiag(2);
+		shapeFunctionGrad(0) = weights[ii][0] * (1+weights[ii][1]*quadPoint(1)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(0);
+		shapeFunctionGrad(1) = weights[ii][1] * (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(1);
+		shapeFunctionGrad(2) = weights[ii][2] * (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][1]*quadPoint(1)) / fourTimesDiag(2);
 
 		Eigen::MatrixXf defGradContribution = (deformedCoords[ii] - refPoints[ii]) * shapeFunctionGrad.transpose();
 		defGradQuad += defGradContribution;
@@ -63,7 +69,10 @@ Eigen::Vector3f HexElement::getForce(std::vector<Eigen::Vector3f> deformedCoords
 		//std::cout << "Shape func gradient: " << shapeFuncGrad << std::endl;
 		Eigen::Matrix3f PK1 = NeoHookeanModel::firstPiolaStress(defGrad);
 		//std::cout << "PK1: " << PK1 << std::endl;
-		force -= NeoHookeanModel::firstPiolaStress(defGrad) * shapeFuncGrad;
+		Eigen::Vector3f referenceDiagonal = (refPoints[7] - refPoints[0]);
+		float refVolume = referenceDiagonal(0) * referenceDiagonal(1) * referenceDiagonal(2);
+		force -= PK1 * shapeFuncGrad * refVolume * quadrature.weights[jj];
+		//std::cout << "Pk1: " << std::endl << PK1 << std::endl;
 	}
 
 	return force;
@@ -73,9 +82,8 @@ Eigen::Vector3f HexElement::getShapeFuncGrad(Eigen::Vector3f quadPoint, int ii)
 {
 	Eigen::Vector3f shapeFuncGrad;
 	Eigen::Vector3f fourTimesDiag = 4 * (refPoints[7] - refPoints[0]);
-	Eigen::Vector3f shapeFunctionGradMember;
-	shapeFuncGrad(0) = (1+weights[ii][1]*quadPoint(1)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(0);
-	shapeFuncGrad(1) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(1);
-	shapeFuncGrad(2) = (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][1]*quadPoint(1)) / fourTimesDiag(2);
+	shapeFuncGrad(0) = weights[ii][0] * (1+weights[ii][1]*quadPoint(1)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(0);
+	shapeFuncGrad(1) = weights[ii][1] * (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][2]*quadPoint(2)) / fourTimesDiag(1);
+	shapeFuncGrad(2) = weights[ii][2] * (1+weights[ii][0]*quadPoint(0)) * (1+weights[ii][1]*quadPoint(1)) / fourTimesDiag(2);
 	return shapeFuncGrad;
 }
