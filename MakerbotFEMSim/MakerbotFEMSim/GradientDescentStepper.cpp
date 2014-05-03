@@ -1,9 +1,8 @@
 #include "GradientDescentStepper.h"
 
 
-GradientDescentStepper::GradientDescentStepper(ElementMesh * mesh)
+GradientDescentStepper::GradientDescentStepper(ElementMesh * mesh) : BaseStepper(mesh)
 {
-	this->mesh = mesh;
 	totalExternalForce = Eigen::Vector3f::Zero();
 	Eigen::Vector3f force(.02,-.05,0);
 	mesh->externalForcesPerVertex.push_back(force);
@@ -11,8 +10,6 @@ GradientDescentStepper::GradientDescentStepper(ElementMesh * mesh)
 	{
 		totalExternalForce += mesh->externalForcesPerVertex[i];
 	}
-
-	//std::cout << "Total external force: " << totalExternalForce << std::endl;
 }
 
 
@@ -33,8 +30,6 @@ void GradientDescentStepper::step()
 		}
 	}
 
-//	std::cout << "Initial total force vector: " << totalForceVector << std::endl;
-
 	for (int elementI = 0; elementI < mesh->elements.size(); ++elementI)
 	{
 		HexElement * elem = (HexElement*) mesh->elements[elementI];
@@ -54,20 +49,10 @@ void GradientDescentStepper::step()
 			}
 			Eigen::Vector3f forceOnVertex = elem->getForce(elemDeformedCoords, ii);
 
-	//		if (elementI == 1 && ii==7) 
-//			{
-
-				//std::cout << std::endl;
-	//			std::cout << "Force on vertex " << ii << ": " << forceOnVertex << std::endl;
-//			}
-
 			totalForceVector.block(3*sharedCoordIndex, 0, 3, 1) = totalForceVector.block(3*sharedCoordIndex, 0, 3, 1) + forceOnVertex;
 		}
 	}
 
-	//std::cout << totalForceVector << std::endl;
-
-	// gradient descent 
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
 		Eigen::Vector3f force = totalForceVector.block(3*sharedCoordI, 0, 3, 1);

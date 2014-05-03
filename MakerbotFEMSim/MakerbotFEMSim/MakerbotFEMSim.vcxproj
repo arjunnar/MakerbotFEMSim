@@ -154,10 +154,12 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseStepper.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementMesh.cpp" />
     <ClCompile Include="NeoHookeanModel.cpp" />
+    <ClCompile Include="NewtonMethodStepper.cpp" />
     <ClCompile Include="Quadrature.cpp" />
     <ClCompile Include="HexElement.cpp" />
     <ClCompile Include="HexRendering.cpp" />
@@ -173,11 +175,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClCompile Include="vecmath\src\Vector4f.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseStepper.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementMesh.h" />
     <ClInclude Include="extra.h" />
     <ClInclude Include="NeoHookeanModel.h" />
+    <ClInclude Include="NewtonMethodStepper.h" />
     <ClInclude Include="Quadrature.h" />
     <ClInclude Include="HexElement.h" />
     <ClInclude Include="HexRendering.h" />
