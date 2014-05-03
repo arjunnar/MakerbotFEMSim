@@ -9,19 +9,23 @@
 #include "ElementMesh.h"
 #include "MeshBuilder.h"
 #include "HexRendering.h"
+
+// steppers
+#include "BaseStepper.h"
 #include "GradientDescentStepper.h"
+#include "NewtonMethodStepper.h"
 
 using namespace std;
 
 // Globals
 int numIters = 0;
-int maxIters = 1000000;
-float cubeSize = .1;
+int maxIters = 1000;
+float cubeSize = 1.0f;
 
 namespace
 {
 	ElementMesh * mesh;
-	GradientDescentStepper * stepper;
+	BaseStepper * stepper;
     void initSystem(int argc, char * argv[])
     {
         // Seed the random number generator with the current time
@@ -42,10 +46,11 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,cubeSize,0));
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
-		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2,cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,cubeSize, refPoints);
 
 
-		stepper = new GradientDescentStepper(mesh);
+		//stepper = new GradientDescentStepper(mesh);
+		stepper = new NewtonMethodStepper(mesh);
 
     }
 

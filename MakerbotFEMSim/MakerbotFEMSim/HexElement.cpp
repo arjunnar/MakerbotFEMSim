@@ -30,13 +30,16 @@ HexElement::HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> X
 
 Eigen::MatrixXf HexElement::stiffnessMatrix(std::vector<Eigen::Vector3f> deformedCoords)
 {
+	Eigen::Vector3f diag = (refPoints[7] - refPoints[0]);
+	float volume = diag[0]*diag[1]*diag[2];
+
 	Eigen::MatrixXf K(KDIM, KDIM);
 	K.setZero();
 	
 	for (int jj = 0; jj < NVERT; ++jj)
 	{
 		Eigen::Matrix3f Fj = defGradAtQuadPoint(deformedCoords, quadrature.gaussCubePoints[jj]);
-		K += KAtQuadPoint(quadrature.weights[jj], quadrature.gaussCubePoints[jj], Fj);
+		K += volume * KAtQuadPoint(quadrature.weights[jj], quadrature.gaussCubePoints[jj], Fj);
 	}
 
 	return K;
