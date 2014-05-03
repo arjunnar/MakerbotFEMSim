@@ -15,7 +15,7 @@ using namespace std;
 
 // Globals
 int numIters = 0;
-int maxIters = 100000;
+int maxIters = 1000000;
 float cubeSize = .1;
 
 namespace
