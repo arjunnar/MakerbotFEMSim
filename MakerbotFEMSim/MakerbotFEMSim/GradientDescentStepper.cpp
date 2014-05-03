@@ -1,7 +1,7 @@
-#include "NewtonMethodStepper.h"
+#include "GradientDescentStepper.h"
 
 
-NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh)
+GradientDescentStepper::GradientDescentStepper(ElementMesh * mesh)
 {
 	this->mesh = mesh;
 	totalExternalForce = Eigen::Vector3f::Zero();
@@ -16,7 +16,7 @@ NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh)
 }
 
 
-void NewtonMethodStepper::step()
+void GradientDescentStepper::step()
 {
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
 

@@ -9,7 +9,7 @@
 #include "ElementMesh.h"
 #include "MeshBuilder.h"
 #include "HexRendering.h"
-#include "NewtonMethodStepper.h"
+#include "GradientDescentStepper.h"
 
 using namespace std;
 
@@ -21,7 +21,7 @@ float cubeSize = .1;
 namespace
 {
 	ElementMesh * mesh;
-	NewtonMethodStepper * stepper;
+	GradientDescentStepper * stepper;
     void initSystem(int argc, char * argv[])
     {
         // Seed the random number generator with the current time
@@ -45,7 +45,7 @@ namespace
 		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2,cubeSize, refPoints);
 
 
-		stepper = new NewtonMethodStepper(mesh);
+		stepper = new GradientDescentStepper(mesh);
 
     }
 

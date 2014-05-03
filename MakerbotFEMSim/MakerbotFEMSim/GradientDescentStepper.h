@@ -4,10 +4,10 @@
 #include "HexElement.h"
 #include <iostream>
 
-class NewtonMethodStepper
+class GradientDescentStepper
 {
 public:
-	NewtonMethodStepper(ElementMesh * mesh);
+	GradientDescentStepper(ElementMesh * mesh);
 	void draw();
 	void step();
 

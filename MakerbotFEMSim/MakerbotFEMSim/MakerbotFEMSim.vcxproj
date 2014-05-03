@@ -163,7 +163,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClCompile Include="HexRendering.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshBuilder.cpp" />
-    <ClCompile Include="NewtonMethodStepper.cpp" />
+    <ClCompile Include="GradientDescentStepper.cpp" />
     <ClCompile Include="vecmath\src\Matrix2f.cpp" />
     <ClCompile Include="vecmath\src\Matrix3f.cpp" />
     <ClCompile Include="vecmath\src\Matrix4f.cpp" />
@@ -182,7 +182,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="HexElement.h" />
     <ClInclude Include="HexRendering.h" />
     <ClInclude Include="MeshBuilder.h" />
-    <ClInclude Include="NewtonMethodStepper.h" />
+    <ClInclude Include="GradientDescentStepper.h" />
     <ClInclude Include="vecmath\include\Matrix2f.h" />
     <ClInclude Include="vecmath\include\Matrix3f.h" />
     <ClInclude Include="vecmath\include\Matrix4f.h" />
