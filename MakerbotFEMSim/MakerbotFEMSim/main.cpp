@@ -19,7 +19,7 @@ using namespace std;
 
 // Globals
 int numIters = 0;
-int maxIters = 1000;
+int maxIters = 10;
 float cubeSize = 1.0f;
 
 namespace

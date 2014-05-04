@@ -68,6 +68,6 @@ void NewtonMethodStepper::step()
 
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
-		mesh->coords[sharedCoordI] -= .01 * deltaX.block(3*sharedCoordI, 0, 3, 1);
+		mesh->coords[sharedCoordI] += deltaX.block(3*sharedCoordI, 0, 3, 1);
 	}
 }
