@@ -62,7 +62,6 @@ void NewtonMethodStepper::step()
 	Eigen::MatrixXf K = elem->stiffnessMatrix(elemDeformedCoords);
 	Eigen::VectorXf deltaX = K.colPivHouseholderQr().solve(totalForceVector);
 
-
 	std::cout << "totalForceVector: " << totalForceVector << std::endl;
 	std::cout << "K:" << K << std::endl;
 	std::cout << "deltaX:" << deltaX << std::endl;
