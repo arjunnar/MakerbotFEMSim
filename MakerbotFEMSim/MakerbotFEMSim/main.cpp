@@ -19,8 +19,15 @@ using namespace std;
 
 // Globals
 int numIters = 0;
+<<<<<<< HEAD
 int maxIters = 10;
 float cubeSize = 1.0f;
+=======
+int maxIters = 10000;
+float cubeSize = 0.5f;
+bool stepModeOn = true;
+bool doStep = false; 
+>>>>>>> daeff002f50eed0b6843167cf460349a725cab3f
 
 namespace
 {
@@ -58,8 +65,22 @@ namespace
 	{
 		if (numIters < maxIters)
 		{
-			stepper->step();
-			++numIters;
+			if (stepModeOn)
+			{
+				if (doStep)
+				{
+					stepper->step();
+					doStep = false;
+					++numIters;
+				}
+			}
+
+			else 
+			{
+				stepper->step();
+				++numIters;
+			}
+
 			//std::cout << numIters << std::endl;
 		}
     }
@@ -98,6 +119,16 @@ namespace
                 exit(0);
                 break;
             }
+
+			case 's': 
+			{
+				if (stepModeOn)
+				{
+					doStep = true;
+				}
+
+				break;
+			}
 
             default:
                 cout << "Unhandled key press " << key << "." << endl;
