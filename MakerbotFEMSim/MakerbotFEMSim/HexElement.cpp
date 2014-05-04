@@ -21,11 +21,6 @@ HexElement::HexElement(std::vector<int> vertices, std::vector<Eigen::Vector3f> X
 	 {
 		 refPoints[ii] = refPoints[ii] + corner;
 	 }
-
-	 for (int i = 0; i < NVERT; ++i)
-	 {
-		 std::cout << refPoints[i] << std::endl;
-	 }
 }
 
 Eigen::MatrixXf HexElement::stiffnessMatrix(std::vector<Eigen::Vector3f> deformedCoords)
