@@ -4,14 +4,14 @@
 
 #include <Eigen/Dense>
 
-class NewtonMethodStepper :
-	public BaseStepper
+class NewtonMethodStepper : public BaseStepper
 {
+
 public:
 	NewtonMethodStepper(ElementMesh * mesh);
 	void step();
+
 private:
 	Eigen::Vector3f totalExternalForce;
-
 };
 
