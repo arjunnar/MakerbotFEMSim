@@ -62,7 +62,7 @@ Eigen::MatrixXf HexElement::KAtQuadPoint(float weight, Eigen::Vector3f quadPoint
 			Eigen::Matrix3f dF;
 			dF.setZero();
 			dF.row(col) = shapeFuncGrad[ii].transpose();
-			std::cout << "dF: " << dF << std::endl;
+			//std::cout << "dF: " << dF << std::endl;
 			Eigen::Matrix3f dPdxInDirection = NeoHookeanModel::dPdx(Fj, dF);
 
 			for (int forceNum = 0; forceNum < NVERT; ++forceNum)

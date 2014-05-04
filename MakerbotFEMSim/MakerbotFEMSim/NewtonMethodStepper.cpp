@@ -54,17 +54,35 @@ void NewtonMethodStepper::step()
 		}
 
 		Eigen::Vector3f forceOnVertex = elem->getForce(elemDeformedCoords, ii);
+		
+		std::cout << "force on vertex " << ii << ": " << forceOnVertex << std::endl;
 
 		totalForceVector.block(3*ii, 0, 3, 1) = totalForceVector.block(3*ii, 0, 3, 1) + forceOnVertex;
 	}			
 
 
 	Eigen::MatrixXf K = elem->stiffnessMatrix(elemDeformedCoords);
-	Eigen::VectorXf deltaX = K.colPivHouseholderQr().solve(totalForceVector);
+	
 
 	std::cout << "totalForceVector: " << totalForceVector << std::endl;
 	std::cout << "K:" << K << std::endl;
-	std::cout << "deltaX:" << deltaX << std::endl;
+
+	// remove fixed vertices (hard code this for now)
+	Eigen::MatrixXf newK(12,12);
+	newK.block(0,0,6,6) = K.block(6,6,6,6);
+	newK.block(0,6,6,6) = K.block(6,18,6,6);
+	newK.block(6,0,6,6) = K.block(18,6,6,6);
+	newK.block(6,6,6,6) = K.block(18,18,6,6);
+	
+	Eigen::VectorXf newForce(12);
+	newForce.block(0,0,6,1) = totalForceVector.block(6,0,6,1); // vertices 2 and 3
+	newForce.block(6,0,6,1) = totalForceVector.block(18,0,6,1); // vertices 6 and 7	
+	
+	Eigen::VectorXf deltaX = newK.colPivHouseholderQr().solve(newForce);
+
+	std::cout << "newK: " << newK << std::endl;
+	std::cout << "newForce: " << newForce << std::endl;
+	std::cout << "deltaX: " << deltaX << std::endl;
 
 	for (int ii = 0; ii < 8; ++ii)
 	{
@@ -75,6 +93,17 @@ void NewtonMethodStepper::step()
 			continue; 
 		}
 
-		mesh->coords[sharedCoordIndex] += stepSize * deltaX.block(3*ii, 0, 3, 1);
+		int blockNum = -1;
+
+		if (ii == 2)
+			blockNum = 0;
+		else if (ii == 3)
+			blockNum = 1;
+		else if (ii == 6)
+			blockNum = 2;
+		else if (ii == 7)
+			blockNum = 3;
+
+		mesh->coords[sharedCoordIndex] += stepSize * deltaX.block(3*blockNum, 0, 3, 1);
 	}
 }
