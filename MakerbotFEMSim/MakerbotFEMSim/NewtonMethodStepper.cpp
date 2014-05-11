@@ -4,7 +4,7 @@
 NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)
 {
 	totalExternalForce = Eigen::Vector3f::Zero();
-	Eigen::Vector3f force(10.0f,0,0);
+	Eigen::Vector3f force(1.0f,0,0);
 	mesh->externalForcesPerVertex.push_back(force);
 	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
 	{
@@ -16,7 +16,7 @@ NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)
 void NewtonMethodStepper::step()
 {
 	std::cout << "Taking Newton's Method step" << std::endl;
-	float stepSize = 1.0f;
+	float stepSize = 0.02f;
 
 	// TEST WITH ONE ELEMENT NOW
 	HexElement * elem = (HexElement*) mesh->elements[0];
@@ -55,7 +55,7 @@ void NewtonMethodStepper::step()
 
 		Eigen::Vector3f forceOnVertex = elem->getForce(elemDeformedCoords, ii);
 		
-		std::cout << "force on vertex " << ii << ": " << forceOnVertex << std::endl;
+		//std::cout << "force on vertex " << ii << ": " << forceOnVertex << std::endl;
 
 		totalForceVector.block(3*ii, 0, 3, 1) = totalForceVector.block(3*ii, 0, 3, 1) + forceOnVertex;
 	}			
@@ -64,8 +64,8 @@ void NewtonMethodStepper::step()
 	Eigen::MatrixXf K = elem->stiffnessMatrix(elemDeformedCoords);
 	
 
-	std::cout << "totalForceVector: " << totalForceVector << std::endl;
-	std::cout << "K:" << K << std::endl;
+	//std::cout << "totalForceVector: " << totalForceVector << std::endl;
+	//std::cout << "K:" << K << std::endl;
 
 	// remove fixed vertices (hard code this for now)
 	Eigen::MatrixXf newK(12,12);
@@ -80,9 +80,9 @@ void NewtonMethodStepper::step()
 	
 	Eigen::VectorXf deltaX = newK.colPivHouseholderQr().solve(newForce);
 
-	std::cout << "newK: " << newK << std::endl;
-	std::cout << "newForce: " << newForce << std::endl;
-	std::cout << "deltaX: " << deltaX << std::endl;
+	//std::cout << "newK: " << newK << std::endl;
+	//std::cout << "newForce: " << newForce << std::endl;
+	//std::cout << "deltaX: " << deltaX << std::endl;
 
 	for (int ii = 0; ii < 8; ++ii)
 	{

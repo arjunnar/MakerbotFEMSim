@@ -5,7 +5,7 @@ GradientDescentStepper::GradientDescentStepper(ElementMesh * mesh) : BaseStepper
 {
 	totalExternalForce = Eigen::Vector3f::Zero();
 	//Eigen::Vector3f force(.02,-.05,0);
-	Eigen::Vector3f force(10.0f,0,0);
+	Eigen::Vector3f force(1.0f,0,0);
 	mesh->externalForcesPerVertex.push_back(force);
 	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
 	{

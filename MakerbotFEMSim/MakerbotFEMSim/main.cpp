@@ -22,7 +22,7 @@ int numIters = 0;
 
 int maxIters = 10000;
 float cubeSize = 0.5f;
-bool stepModeOn = true;
+bool stepModeOn = false;
 bool doStep = false; 
 
 namespace
@@ -52,8 +52,8 @@ namespace
 		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,cubeSize, refPoints);
 
 
-		//stepper = new GradientDescentStepper(mesh);
-		stepper = new NewtonMethodStepper(mesh);
+		stepper = new GradientDescentStepper(mesh);
+		//stepper = new NewtonMethodStepper(mesh);
 
     }
 
@@ -77,7 +77,7 @@ namespace
 				++numIters;
 			}
 
-			//std::cout << numIters << std::endl;
+			std::cout << "Iteration num: " << numIters << std::endl;
 		}
     }
 
