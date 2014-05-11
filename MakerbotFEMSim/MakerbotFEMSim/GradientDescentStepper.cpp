@@ -4,9 +4,8 @@
 GradientDescentStepper::GradientDescentStepper(ElementMesh * mesh) : BaseStepper(mesh)
 {
 	totalExternalForce = Eigen::Vector3f::Zero();
-	//Eigen::Vector3f force(.02,-.05,0);
-
-	Eigen::Vector3f force(1.0f,0,0);
+	Eigen::Vector3f force(.02,0,0);
+	//	Eigen::Vector3f force(1.0f,0,0);
 	mesh->externalForcesPerVertex.push_back(force);
 	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
 	{
@@ -21,7 +20,7 @@ void GradientDescentStepper::step()
 
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
-		if (mesh->sharedIndexBase.count(sharedCoordI) > 0 )//|| sharedCoordI < 72)
+		if (mesh->sharedIndexBase.count(sharedCoordI) > 0 || sharedCoordI < 72)
 		{
 			totalForceVector.block(3*sharedCoordI, 0, 3, 1) = Eigen::Vector3f::Zero();
 		}
@@ -64,6 +63,6 @@ void GradientDescentStepper::step()
 			continue;
 		}
 
-		mesh->coords[sharedCoordI] += 0.02*force;
+		mesh->coords[sharedCoordI] += 0.01*force;
 	}
 }

@@ -22,8 +22,8 @@ using namespace std;
 int numIters = 0;
 
 int maxIters = 10000;
-float cubeSize = 0.5f;
-bool stepModeOn = false;
+float cubeSize = 0.1f;
+bool stepModeOn = true;
 bool doStep = false; 
 
 namespace
@@ -37,7 +37,6 @@ namespace
 
 		//newtonMethodSystem = new NewtonMethodSystem();
 		//elementMesh = MeshBuilder::buildPendulumMesh(pendulumNumParticles);
-		//mesh = MeshBuilder::buildGenericCubeMesh(4,16,4,.1);
 
 		// build reference coordinates 
 		std::vector<Eigen::Vector3f> refPoints;
@@ -50,7 +49,8 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize,cubeSize,0));
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
-		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,cubeSize, refPoints);
+		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
 
 
 		//stepper = new GradientDescentStepper(mesh);

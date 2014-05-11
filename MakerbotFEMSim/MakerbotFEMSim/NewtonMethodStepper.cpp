@@ -4,7 +4,7 @@
 NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)
 {
 	totalExternalForce = Eigen::Vector3f::Zero();
-	Eigen::Vector3f force(1.0f,0,0);
+	Eigen::Vector3f force(-0.02,-0.05,0);
 	mesh->externalForcesPerVertex.push_back(force);
 	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
 	{
@@ -16,7 +16,7 @@ NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)
 void NewtonMethodStepper::step()
 {
 	std::cout << "Taking Newton's Method step" << std::endl;
-	float stepSize = 1.0f;
+	float stepSize = 0.01f;
 
 	int numNonFixedVertices = 0;
 	std::vector<int> nonFixedIndexes; 
@@ -31,7 +31,11 @@ void NewtonMethodStepper::step()
 		{
 			++numNonFixedVertices;
 			nonFixedIndexes.push_back(sharedCoordI);
-			totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce;  // TODO
+
+			if (sharedCoordI > 72)
+			{
+				totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce;  // TODO
+			}
 		}
 
 		else 
