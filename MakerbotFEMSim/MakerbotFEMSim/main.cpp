@@ -22,7 +22,11 @@ int numIters = 0;
 
 int maxIters = 10000;
 float cubeSize = 0.5f;
+<<<<<<< HEAD
 bool stepModeOn = true;
+=======
+bool stepModeOn = false;
+>>>>>>> 350409653274900eab9808ec2e395122f3de840e
 bool doStep = false; 
 
 namespace
@@ -77,7 +81,11 @@ namespace
 				++numIters;
 			}
 
+<<<<<<< HEAD
 			//std::cout << numIters << std::endl;
+=======
+			std::cout << "Iteration num: " << numIters << std::endl;
+>>>>>>> 350409653274900eab9808ec2e395122f3de840e
 		}
     }
 
