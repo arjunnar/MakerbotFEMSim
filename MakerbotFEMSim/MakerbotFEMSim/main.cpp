@@ -79,6 +79,7 @@ namespace
 			}
 
 			std::cout << "Iteration num: " << numIters << std::endl;
+
 		}
     }
 
@@ -139,6 +140,7 @@ namespace
     // received.  Right now, it's handling the arrow keys.
     void specialFunc( int key, int x, int y )
     {
+		
         switch ( key )
         {
 

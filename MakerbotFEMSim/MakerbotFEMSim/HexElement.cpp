@@ -42,9 +42,9 @@ Eigen::MatrixXf HexElement::stiffnessMatrix(std::vector<Eigen::Vector3f> deforme
 
 Eigen::MatrixXf HexElement::KAtQuadPoint(float weight, Eigen::Vector3f quadPoint, Eigen::Matrix3f Fj)
 {
+
 	Eigen::MatrixXf Kj = Eigen::MatrixXf::Zero(KDIM,KDIM);
 	
-
 	// calculate shape function gradient for each vertex for the specified quad point
 	Eigen::Vector3f shapeFuncGrad[NVERT];
 	for (int ii = 0; ii < NVERT; ++ii)
@@ -69,6 +69,7 @@ Eigen::MatrixXf HexElement::KAtQuadPoint(float weight, Eigen::Vector3f quadPoint
 			{
 				Eigen::Vector3f dForceInDirection = dPdxInDirection*shapeFuncGrad[forceNum];
 				Kj.block(forceNum*3, 3*ii + col, 3, 1) += weight*dForceInDirection;
+
 			}
 		}
 	}

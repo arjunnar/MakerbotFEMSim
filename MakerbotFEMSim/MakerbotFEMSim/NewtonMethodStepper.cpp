@@ -18,7 +18,6 @@ void NewtonMethodStepper::step()
 	std::cout << "Taking Newton's Method step" << std::endl;
 	float stepSize = 1.0f;
 
-
 	int numNonFixedVertices = 0;
 	std::vector<int> nonFixedIndexes; 
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
@@ -112,6 +111,7 @@ void NewtonMethodStepper::step()
 		++nRowsNonFixed;
 	}
 	
+
 	int nonFixedCount = 0;
 	for (int ii = 0; ii < mesh->coords.size(); ++ii)
 	{
