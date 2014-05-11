@@ -16,94 +16,124 @@ NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)
 void NewtonMethodStepper::step()
 {
 	std::cout << "Taking Newton's Method step" << std::endl;
-	float stepSize = 0.02f;
+	float stepSize = 1.0f;
 
-	// TEST WITH ONE ELEMENT NOW
-	HexElement * elem = (HexElement*) mesh->elements[0];
 
-	// K is computed with element ordering, so use element ordering for total force as well (don't use global shared coord ordering)
-	Eigen::VectorXf totalForceVector(3*8); 
+	int numNonFixedVertices = 0;
+	std::vector<int> nonFixedIndexes; 
+	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
+	totalForceVector.setZero();
+	Eigen::MatrixXf K(3*mesh->coords.size(), 3*mesh->coords.size());
+	K.setZero();
 
-	for (int ii = 0; ii < 8; ++ii)
+	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
-		// fix base of single element
-		if (elem->vertices[ii] < 4)
+		if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
 		{
-			totalForceVector.block(3*ii, 0, 3, 1) = Eigen::Vector3f::Zero();
+			++numNonFixedVertices;
+			nonFixedIndexes.push_back(sharedCoordI);
+			totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce;  // TODO
 		}
-		
+
 		else 
 		{
-			totalForceVector.block(3*ii, 0, 3, 1) = totalExternalForce;
+			totalForceVector.block(3*sharedCoordI, 0, 3, 1) = Eigen::Vector3f::Zero();
 		}
 	}
 
-	std::vector<Eigen::Vector3f> elemDeformedCoords;
+	for (int elementI = 0; elementI < mesh->elements.size(); ++elementI)
+	{
+		HexElement * elem = (HexElement*) mesh->elements[elementI];
+		std::vector<Eigen::Vector3f> elemDeformedCoords; 
 
-	for (int ii = 0; ii < elem->vertices.size(); ++ii)
-	{
-		elemDeformedCoords.push_back(mesh->coords[elem->vertices[ii]]);
-	}
+		for (int ii = 0; ii < elem->vertices.size(); ++ii)
+		{
+			elemDeformedCoords.push_back(mesh->coords[elem->vertices[ii]]);
+		}
 		
-	for (int ii = 0; ii < 8; ++ii)
+		for (int ii = 0; ii < elem->vertices.size(); ++ii)
+		{
+			int sharedCoordIndex = elem->vertices[ii];
+			
+			if (mesh->sharedIndexBase.count(sharedCoordIndex) > 0)
+			{
+				continue;
+			}
+
+			Eigen::Vector3f forceOnVertex = elem->getForce(elemDeformedCoords, ii);
+
+			totalForceVector.block(3*sharedCoordIndex, 0, 3, 1) = totalForceVector.block(3*sharedCoordIndex, 0, 3, 1) + forceOnVertex;
+		}
+		
+
+		// put element K into total K
+		Eigen::MatrixXf elementK = elem->stiffnessMatrix(elemDeformedCoords);
+		for (int rowI = 0; rowI < elem->vertices.size(); ++rowI) // rows
+		{
+			int rowSharedCoordIndex = elem->vertices[rowI];
+
+			for (int colI = 0; colI < elem->vertices.size(); ++colI) // columns
+			{
+				int colSharedCoordIndex = elem->vertices[colI];
+				Eigen::Matrix3f elementKBlock = elementK.block(3*rowI, 3*colI, 3, 3);
+				K.block(3*rowSharedCoordIndex, 3*colSharedCoordIndex, 3, 3) += elementKBlock;
+			}
+		}
+	}
+
+	Eigen::MatrixXf newK(3*numNonFixedVertices, 3*numNonFixedVertices);
+	newK.setZero();
+
+	Eigen::VectorXf newForce(3*numNonFixedVertices);
+	newForce.setZero();
+
+	int nRowsNonFixed = 0;
+	for (int rowI = 0; rowI < mesh->coords.size(); ++rowI)
 	{
-		// again, fix base of single element
-		if (elem->vertices[ii] < 4)
+		// row fixed
+		if (mesh->sharedIndexBase.count(rowI) > 0)
 		{
 			continue;
 		}
 
-		Eigen::Vector3f forceOnVertex = elem->getForce(elemDeformedCoords, ii);
 		
-		//std::cout << "force on vertex " << ii << ": " << forceOnVertex << std::endl;
+		int nColsNonFixed = 0;
+		for (int colI = 0; colI < mesh->coords.size(); ++colI)
+		{
+			if (mesh->sharedIndexBase.count(colI) > 0)
+			{
+				continue;
+			}
 
-		totalForceVector.block(3*ii, 0, 3, 1) = totalForceVector.block(3*ii, 0, 3, 1) + forceOnVertex;
-	}			
-
-
-	Eigen::MatrixXf K = elem->stiffnessMatrix(elemDeformedCoords);
+			newK.block(3*nRowsNonFixed, 3*nColsNonFixed, 3, 3) += K.block(3*rowI, 3*colI, 3, 3);
+			++nColsNonFixed;
+		}
+		
+		++nRowsNonFixed;
+	}
 	
+	int nonFixedCount = 0;
+	for (int ii = 0; ii < mesh->coords.size(); ++ii)
+	{
+		if (mesh->sharedIndexBase.count(ii) > 0)
+		{
+			continue; 
+		}
 
-	//std::cout << "totalForceVector: " << totalForceVector << std::endl;
-	//std::cout << "K:" << K << std::endl;
+		newForce.block(3*nonFixedCount, 0, 3, 1) += totalForceVector.block(3*ii, 0, 3, 1);
+		++nonFixedCount;
+	}
 
-	// remove fixed vertices (hard code this for now)
-	Eigen::MatrixXf newK(12,12);
-	newK.block(0,0,6,6) = K.block(6,6,6,6);
-	newK.block(0,6,6,6) = K.block(6,18,6,6);
-	newK.block(6,0,6,6) = K.block(18,6,6,6);
-	newK.block(6,6,6,6) = K.block(18,18,6,6);
-	
-	Eigen::VectorXf newForce(12);
-	newForce.block(0,0,6,1) = totalForceVector.block(6,0,6,1); // vertices 2 and 3
-	newForce.block(6,0,6,1) = totalForceVector.block(18,0,6,1); // vertices 6 and 7	
-	
 	Eigen::VectorXf deltaX = newK.colPivHouseholderQr().solve(newForce);
 
 	//std::cout << "newK: " << newK << std::endl;
 	//std::cout << "newForce: " << newForce << std::endl;
 	//std::cout << "deltaX: " << deltaX << std::endl;
 
-	for (int ii = 0; ii < 8; ++ii)
+	for (int ii = 0; ii < numNonFixedVertices; ++ii)
 	{
-		int sharedCoordIndex = elem->vertices[ii];
+		int sharedCoordIndex = nonFixedIndexes[ii];
 
-		if (sharedCoordIndex < 4)
-		{
-			continue; 
-		}
-
-		int blockNum = -1;
-
-		if (ii == 2)
-			blockNum = 0;
-		else if (ii == 3)
-			blockNum = 1;
-		else if (ii == 6)
-			blockNum = 2;
-		else if (ii == 7)
-			blockNum = 3;
-
-		mesh->coords[sharedCoordIndex] += stepSize * deltaX.block(3*blockNum, 0, 3, 1);
+		mesh->coords[sharedCoordIndex] += stepSize * deltaX.block(3*ii, 0, 3, 1);
 	}
 }

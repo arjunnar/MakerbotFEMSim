@@ -6,6 +6,7 @@
 
 #include "camera.h"
 #include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include "ElementMesh.h"
 #include "MeshBuilder.h"
 #include "HexRendering.h"
@@ -52,8 +53,8 @@ namespace
 		mesh = MeshBuilder::buildGenericCubeMesh(1,1,1,cubeSize, refPoints);
 
 
-		stepper = new GradientDescentStepper(mesh);
-		//stepper = new NewtonMethodStepper(mesh);
+		//stepper = new GradientDescentStepper(mesh);
+		stepper = new NewtonMethodStepper(mesh);
 
     }
 
