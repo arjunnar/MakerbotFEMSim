@@ -1,6 +1,8 @@
 Things to do: 
-- Don't repeat lines when rendering hex mesh (Lucas 4/20)
-- Recheck all current physics code (Arjun 4/20)
-- Implement stiffness matrix for a single element (Arjun 4/20)
-- Assemble big stiffness matrix for entire mesh (Arjun 4/20 and Together 4/21)
-- Solve linear system and update shared coordinates (Together 4/21) 
+- Don't repeat lines when rendering hex mesh (not a big deal)
+- Change all stiffness matrices to sparse matrices 
+- Use CUDA cusp solver
+- Integrate voxelizer 
+- Visualize stress 
+- Test cube 
+- Test cylinder
