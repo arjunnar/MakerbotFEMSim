@@ -23,7 +23,7 @@ int numIters = 0;
 
 int maxIters = 10000;
 float cubeSize = 0.1f;
-bool stepModeOn = true;
+bool stepModeOn = false;
 bool doStep = false; 
 
 namespace
@@ -50,7 +50,7 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
-		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(4,16,4, cubeSize, refPoints);
 
 
 		//stepper = new GradientDescentStepper(mesh);
@@ -68,6 +68,7 @@ namespace
 				{
 					stepper->step();
 					doStep = false;
+					std::cout << "Iteration num: " << numIters << std::endl;
 					++numIters;
 				}
 			}
@@ -75,10 +76,10 @@ namespace
 			else 
 			{
 				stepper->step();
+				std::cout << "Iteration num: " << numIters << std::endl;
 				++numIters;
 			}
 
-			std::cout << "Iteration num: " << numIters << std::endl;
 
 		}
     }

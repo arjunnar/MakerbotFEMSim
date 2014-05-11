@@ -2,6 +2,7 @@ Things to do:
 - Don't repeat lines when rendering hex mesh (not a big deal)
 - Change all stiffness matrices to sparse matrices 
 - Use CUDA cusp solver
+- External forces per shared vertex 
 - Integrate voxelizer 
 - Visualize stress 
 - Test cube 

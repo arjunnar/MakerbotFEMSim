@@ -22,8 +22,9 @@ void NewtonMethodStepper::step()
 	std::vector<int> nonFixedIndexes; 
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
 	totalForceVector.setZero();
-	Eigen::MatrixXf K(3*mesh->coords.size(), 3*mesh->coords.size());
-	K.setZero();
+	//Eigen::MatrixXf K(3*mesh->coords.size(), 3*mesh->coords.size());
+	//K.setZero();
+	std::vector<Triplet> tripletsK;
 
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
@@ -32,7 +33,7 @@ void NewtonMethodStepper::step()
 			++numNonFixedVertices;
 			nonFixedIndexes.push_back(sharedCoordI);
 
-			if (sharedCoordI > 72)
+			if (sharedCoordI > 25*16)
 			{
 				totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce;  // TODO
 			}
@@ -79,16 +80,32 @@ void NewtonMethodStepper::step()
 			{
 				int colSharedCoordIndex = elem->vertices[colI];
 				Eigen::Matrix3f elementKBlock = elementK.block(3*rowI, 3*colI, 3, 3);
-				K.block(3*rowSharedCoordIndex, 3*colSharedCoordIndex, 3, 3) += elementKBlock;
+				//K.block(3*rowSharedCoordIndex, 3*colSharedCoordIndex, 3, 3) += elementKBlock;
+
+				for (int r = 0; r < 3; ++r)
+				{
+					for (int c = 0; c < 3; ++c)
+					{
+						if (elementKBlock(r,c) != 0.0f)
+						{
+							tripletsK.push_back( Triplet(3*rowSharedCoordIndex + r, 3*colSharedCoordIndex + c, elementKBlock(r,c)) );
+						}
+					}
+				}
 			}
 		}
 	}
 
-	Eigen::MatrixXf newK(3*numNonFixedVertices, 3*numNonFixedVertices);
-	newK.setZero();
+	SparseMatrix K(3*mesh->coords.size(), 3*mesh->coords.size());
+	K.setFromTriplets(tripletsK.begin(), tripletsK.end());
+	tripletsK.clear();
 
-	Eigen::VectorXf newForce(3*numNonFixedVertices);
-	newForce.setZero();
+
+	//Eigen::MatrixXf newK(3*numNonFixedVertices, 3*numNonFixedVertices);
+	//newK.setZero();
+	std::vector<Triplet> tripletsNewK;
+
+	Eigen::VectorXf newForce = Eigen::VectorXf::Zero(3*numNonFixedVertices);
 
 	int nRowsNonFixed = 0;
 	for (int rowI = 0; rowI < mesh->coords.size(); ++rowI)
@@ -108,13 +125,24 @@ void NewtonMethodStepper::step()
 				continue;
 			}
 
-			newK.block(3*nRowsNonFixed, 3*nColsNonFixed, 3, 3) += K.block(3*rowI, 3*colI, 3, 3);
+			for (int r = 0; r < 3; ++r)
+			{
+				for (int c = 0; c < 3; ++c)
+				{
+					tripletsNewK.push_back( Triplet(3*nRowsNonFixed + r, 3*nColsNonFixed + c, K.coeff(3*rowI + r, 3*colI + c)) );
+				}
+			}
+
+			//newK.block(3*nRowsNonFixed, 3*nColsNonFixed, 3, 3) += K.block(3*rowI, 3*colI, 3, 3);
 			++nColsNonFixed;
 		}
 		
 		++nRowsNonFixed;
 	}
 	
+	SparseMatrix newK(3*numNonFixedVertices, 3*numNonFixedVertices);;
+	newK.setFromTriplets(tripletsNewK.begin(), tripletsNewK.end());
+	tripletsNewK.clear();
 
 	int nonFixedCount = 0;
 	for (int ii = 0; ii < mesh->coords.size(); ++ii)
@@ -127,8 +155,27 @@ void NewtonMethodStepper::step()
 		newForce.block(3*nonFixedCount, 0, 3, 1) += totalForceVector.block(3*ii, 0, 3, 1);
 		++nonFixedCount;
 	}
+	
+	Eigen::ConjugateGradient<SparseMatrix> cg;
+	//std::cout << "newK: " << newK;
+	cg.compute(newK);
 
-	Eigen::VectorXf deltaX = newK.colPivHouseholderQr().solve(newForce);
+	/*
+	Eigen::VectorXf deltaX  = Eigen::VectorXf::Random(3*numNonFixedVertices);
+	cg.setMaxIterations(1);
+	int i = 0;
+	do 
+	{
+		deltaX = cg.solveWithGuess(newForce,deltaX);
+		std::cout << i << " : " << cg.error() << std::endl;
+		++i;
+	} while (cg.info()!=Eigen::Success && i<100);
+	*/
+
+	Eigen::VectorXf deltaX(3*numNonFixedVertices);
+	deltaX = cg.solve(newForce);
+	//std::cout << "Error: " << cg.error() << std::endl;
+	//const Eigen::VectorXf deltaX = chol.solve(newForce);
 
 	//std::cout << "newK: " << newK << std::endl;
 	//std::cout << "newForce: " << newForce << std::endl;
