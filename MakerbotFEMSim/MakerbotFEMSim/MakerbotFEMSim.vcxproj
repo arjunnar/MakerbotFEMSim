@@ -173,6 +173,9 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClCompile Include="vecmath\src\Vector2f.cpp" />
     <ClCompile Include="vecmath\src\Vector3f.cpp" />
     <ClCompile Include="vecmath\src\Vector4f.cpp" />
+    <ClCompile Include="voxelizer\Mesh.cpp" />
+    <ClCompile Include="voxelizer\trigAABBIntersect.cpp" />
+    <ClCompile Include="voxelizer\Voxel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseStepper.h" />
@@ -190,11 +193,6 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="vecmath\include\Matrix2f.h" />
     <ClInclude Include="vecmath\include\Matrix3f.h" />
     <ClInclude Include="vecmath\include\Matrix4f.h" />
-    <ClInclude Include="vecmath\include\Quat4f.h" />
-    <ClInclude Include="vecmath\include\vecmath.h" />
-    <ClInclude Include="vecmath\include\Vector2f.h" />
-    <ClInclude Include="vecmath\include\Vector3f.h" />
-    <ClInclude Include="vecmath\include\Vector4f.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

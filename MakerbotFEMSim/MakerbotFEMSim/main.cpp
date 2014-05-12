@@ -10,6 +10,7 @@
 #include "ElementMesh.h"
 #include "MeshBuilder.h"
 #include "HexRendering.h"
+#include "voxelizer/include/Voxel.hpp"
 
 // steppers
 #include "BaseStepper.h"
@@ -339,9 +340,43 @@ int main( int argc, char* argv[] )
 
     // Trigger timerFunc every 20 msec
     glutTimerFunc(20, timerFunc, 20);
+
+
+	int voxRes = 160;
+	const char * meshfile = "../../sphere.obj";
+	std::cout<<"Load mesh "<<meshfile<<"\n";
+	
+	Voxel voxel(meshfile , voxRes);
+	int vx = voxel.grid.nx;
+	int vy = voxel.grid.ny;
+	int vz = voxel.grid.nz;
+	
+	std::ofstream out("./../../vox_out.txt");
+	if(!out.good())
+	{
+		std::cout<<"Cannot open output file\n";
+		return -1;
+	}
+	
+	for(int ii = 0;ii<vx;ii++)
+	{
+		for(int jj = 0;jj<vy;jj++)
+		{
+			for(int kk = 0;kk<vz;kk++)
+			{
+				out<<voxel.grid.read(ii,jj,kk)<<" ";
+			}
+			out<<"\n";
+		}
+		out<<"\n";
+	
+	}
+
+	voxel.saveObj("voxel_out.obj");
+
         
     // Start the main loop.  glutMainLoop never returns.
-    glutMainLoop();
+   // glutMainLoop();
 
     return 0;	// This line is never reached.
 }
