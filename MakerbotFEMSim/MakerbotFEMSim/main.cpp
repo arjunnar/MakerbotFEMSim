@@ -23,14 +23,13 @@
 
 using namespace std;
 
-// Globals
+// globals
 int numIters = 0;
-
 int maxIters = 10000;
 float cubeSize = 0.1f;
 bool stepModeOn = false;
 bool doStep = false; 
-bool useNewtonCusp = true;
+bool useNewtonCusp = false;
 
 namespace
 {
@@ -59,33 +58,53 @@ namespace
 		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
 
 		//stepper = new GradientDescentStepper(mesh);
-		stepper = new NewtonMethodStepper(mesh);
+		stepper = new NewtonMethodStepper(mesh, false);
 
     }
+
+
+	void takeStep()
+	{
+		if (useNewtonCusp)
+		{
+			// You can't use the Eigen library from a .cu file. 
+			// Thus, we have to do some preprocessing before calling the NewtonStepperCusp
+			
+			// get sparse stiffness matrix for entire mesh 
+
+		}
+
+		else 
+		{
+			stepper->step();
+		}
+
+		++numIters;
+	}
 
     void stepSystem()
 	{
 		if (numIters < maxIters)
 		{
+			std::cout << "Iteration number: " << numIters << std::endl;
 			if (stepModeOn)
 			{
 				if (doStep)
 				{
-					stepper->step();
+					takeStep();
 					doStep = false;
-					std::cout << "Iteration num: " << numIters << std::endl;
-					++numIters;
+				}
+
+				else 
+				{
+					return;
 				}
 			}
 
 			else 
 			{
-				stepper->step();
-				std::cout << "Iteration num: " << numIters << std::endl;
-				++numIters;
+				takeStep();
 			}
-
-
 		}
     }
 

@@ -18,6 +18,11 @@ public:
 	std::vector<Eigen::Vector3f> externalForcesPerVertex;
 	
 	std::set<int> sharedIndexBase;
+	
+	int getNumNonFixedVertices();
+
+private:
+	int numNonFixedVertices;
 
 };
 
