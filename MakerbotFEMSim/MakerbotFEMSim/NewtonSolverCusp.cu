@@ -13,6 +13,7 @@
 #include <thrust/iterator/zip_iterator.h>
 #include <cusp/krylov/cg.h>
 #include <cusp/monitor.h>
+#include <thrust/copy.h>
 
 
 std::vector<float> NewtonSolverCusp::step(std::vector<int> &stdI, std::vector<int> &stdJ, std::vector<float> &stdV, std::vector<float> &stdForce)
@@ -21,14 +22,11 @@ std::vector<float> NewtonSolverCusp::step(std::vector<int> &stdI, std::vector<in
 
 	cusp::array1d<int,   cusp::device_memory> I(num_triplets);  // row indices
     cusp::array1d<int,   cusp::device_memory> J(num_triplets);  // column indices
-    cusp::array1d<float, cusp::device_memory> V(num_triplets);  // values
+    cusp::array1d<float, cusp::device_memory> V(num_triplets);  // value
 	
-	for (int index = 0; index < num_triplets; ++index)
-	{
-		I[index] = stdI[index];
-		J[index] = stdJ[index];
-		V[index] = stdV[index];
-	}
+	thrust::copy(stdI.begin(), stdI.end(), I.begin());
+	thrust::copy(stdJ.begin(), stdJ.end(), J.begin());
+	thrust::copy(stdV.begin(), stdV.end(), V.begin());
 
 	thrust::stable_sort_by_key(J.begin(), J.end(), thrust::make_zip_iterator(thrust::make_tuple(I.begin(), V.begin())));
     thrust::stable_sort_by_key(I.begin(), I.end(), thrust::make_zip_iterator(thrust::make_tuple(J.begin(), V.begin())));
@@ -56,10 +54,7 @@ std::vector<float> NewtonSolverCusp::step(std::vector<int> &stdI, std::vector<in
 	cusp::array1d<float, cusp::device_memory> x(K.num_rows, 0);
     cusp::array1d<float, cusp::device_memory> f(K.num_rows);
 
-	for (int ii = 0; ii < K.num_rows; ++ii)
-	{
-		f[ii] = stdForce[ii];
-	}
+	thrust::copy(stdForce.begin(), stdForce.end(), f.begin());
 
 	// set stopping criteria:
     //  iteration_limit    = 100
@@ -72,10 +67,8 @@ std::vector<float> NewtonSolverCusp::step(std::vector<int> &stdI, std::vector<in
 	cusp::krylov::cg(K,x,f);
 
 	std::vector<float> deltaX(K.num_rows);
-	for (int ii = 0; ii < K.num_rows; ++ii)
-	{
-		deltaX[ii] = x[ii];
-	}
+	
+	thrust::copy(x.begin(), x.end(), deltaX.begin());
 
 	return deltaX;
 }

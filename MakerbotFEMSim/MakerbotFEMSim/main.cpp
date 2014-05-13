@@ -59,10 +59,10 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
-		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(8,32,8, cubeSize, refPoints);
 
 		//stepper = new GradientDescentStepper(mesh);
-		stepper = new NewtonMethodStepper(mesh, false);
+		stepper = new NewtonMethodStepper(mesh, true);
 
     }
 
@@ -124,8 +124,6 @@ namespace
 				int sharedCoordIndex = nonFixedIndexes[ii];
 				mesh->coords[sharedCoordIndex] += 0.01 * deltaX.block(3*ii, 0, 3, 1);
 			}
-
-
 		}
 
 		else 
