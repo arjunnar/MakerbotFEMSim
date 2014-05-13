@@ -51,7 +51,7 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
-		mesh = MeshBuilder::buildGenericCubeMesh(4,16,4, cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
 
 
 		//stepper = new GradientDescentStepper(mesh);
@@ -302,6 +302,7 @@ namespace
 // Set up OpenGL, define the callbacks and start the main loop
 int main( int argc, char* argv[] )
 {
+	
     glutInit( &argc, argv );
 
     // We're going to animate it, so double buffer 
@@ -341,7 +342,7 @@ int main( int argc, char* argv[] )
     // Trigger timerFunc every 20 msec
     glutTimerFunc(20, timerFunc, 20);
 
-
+	/*
 	int voxRes = 160;
 	const char * meshfile = "../../sphere.obj";
 	std::cout<<"Load mesh "<<meshfile<<"\n";
@@ -373,10 +374,10 @@ int main( int argc, char* argv[] )
 	}
 
 	voxel.saveObj("voxel_out.obj");
-
+	*/
         
     // Start the main loop.  glutMainLoop never returns.
-   // glutMainLoop();
+   glutMainLoop();
 
     return 0;	// This line is never reached.
 }
