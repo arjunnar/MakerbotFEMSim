@@ -1,1 +1,2 @@
-void testCusp();
+void testCuspMatAssembly();
+void testCuspCG();

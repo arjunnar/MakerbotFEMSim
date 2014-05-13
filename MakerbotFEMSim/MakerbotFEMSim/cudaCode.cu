@@ -1,20 +1,22 @@
-
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 #include "cudaCode.cuh"
 
 #include <stdio.h>
+
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+
 #include <cusp/coo_matrix.h>
 #include <cusp/print.h>
-
 #include <thrust/sort.h>
 #include <thrust/reduce.h>
 #include <thrust/inner_product.h>
 #include <thrust/iterator/zip_iterator.h>
+#include <cusp/krylov/cg.h>
+#include <cusp/monitor.h>
 
-void testCusp()
+
+void testCuspMatAssembly()
 {
-	
 	 // dimensions of the matrix
     int num_rows = 3;
     int num_cols = 3;
@@ -66,4 +68,78 @@ void testCusp()
     
     // print matrix
     cusp::print(A);
+}
+
+void testCuspCG()
+{
+	int num_rows = 2;
+    int num_cols = 2;
+
+    // number of (i,j,v) triplets
+    int num_triplets = 4;
+
+    // allocate storage for unordered triplets
+    cusp::array1d<int,   cusp::device_memory> I(num_triplets);  // row indices
+    cusp::array1d<int,   cusp::device_memory> J(num_triplets);  // column indices
+    cusp::array1d<float, cusp::device_memory> V(num_triplets);  // values
+
+    // fill triplet arrays
+
+	// first row
+    I[0] = 0; J[0] = 0; V[0] = 4;
+	I[1] = 0; J[1] = 1; V[1] = 1;
+    
+	// second row
+	I[2] = 1; J[2] = 0; V[2] = 1;
+	I[3] = 1; J[3] = 1; V[3] = 3;
+   
+
+	
+    thrust::stable_sort_by_key(J.begin(), J.end(), thrust::make_zip_iterator(thrust::make_tuple(I.begin(), V.begin())));
+    thrust::stable_sort_by_key(I.begin(), I.end(), thrust::make_zip_iterator(thrust::make_tuple(J.begin(), V.begin())));
+	
+    // compute unique number of nonzeros in the output
+    int num_entries = thrust::inner_product(thrust::make_zip_iterator(thrust::make_tuple(I.begin(), J.begin())),
+                                            thrust::make_zip_iterator(thrust::make_tuple(I.end (),  J.end()))   - 1,
+                                            thrust::make_zip_iterator(thrust::make_tuple(I.begin(), J.begin())) + 1,
+                                            int(0),
+                                            thrust::plus<int>(),
+                                            thrust::not_equal_to< thrust::tuple<int,int> >()) + 1;
+
+    // allocate output matrix
+    cusp::coo_matrix<int, float, cusp::device_memory> A(num_rows, num_cols, num_entries);
+    
+    // sum values with the same (i,j) index
+    thrust::reduce_by_key(thrust::make_zip_iterator(thrust::make_tuple(I.begin(), J.begin())),
+                          thrust::make_zip_iterator(thrust::make_tuple(I.end(),   J.end())),
+                          V.begin(),
+                          thrust::make_zip_iterator(thrust::make_tuple(A.row_indices.begin(), A.column_indices.begin())),
+                          A.values.begin(),
+                          thrust::equal_to< thrust::tuple<int,int> >(),
+                          thrust::plus<float>());
+
+
+    std::cout << "Matrix A: " << std::endl;
+	cusp::print_matrix(A);
+
+	cusp::array1d<float, cusp::device_memory> x(A.num_rows, 0);
+    cusp::array1d<float, cusp::device_memory> b(A.num_rows);
+	b[0] = 1; b[1] = 2;
+
+	std::cout << "Vector b: " << std::endl;
+	cusp::print(b);
+	
+
+	// set stopping criteria:
+    //  iteration_limit    = 100
+    //  relative_tolerance = 1e-3
+    cusp::verbose_monitor<float> monitor(b, 100, 1e-3);
+
+	// set preconditioner (identity)
+	cusp::identity_operator<float, cusp::device_memory> M(A.num_rows, A.num_rows);
+	
+	cusp::krylov::cg(A,x, b);
+
+	std::cout << "Solution Vector x: " << std::endl;
+	cusp::print(x);
 }

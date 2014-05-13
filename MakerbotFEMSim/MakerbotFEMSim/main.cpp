@@ -348,7 +348,8 @@ void glutInitilization(int argc, char* argv[])
 // Set up OpenGL, define the callbacks and start the main loop
 int main( int argc, char* argv[] )
 {
-	testCusp();
+	//testCuspMatAssembly();
+	testCuspCG();
 
 	//glutInitilization(argc, argv);
 
