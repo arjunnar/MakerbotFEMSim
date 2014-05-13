@@ -74,7 +74,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(SolutionDir)..\eigen3;$(SolutionDir)..\glut_windows;$(SolutionDir)..\freeglut\include\GL;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\cusplibrary;$(SolutionDir)..\eigen3;$(SolutionDir)..\glut_windows;$(SolutionDir)..\freeglut\include\GL;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -151,7 +151,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CudaCompile Include="kernel.cu" />
+    <CudaCompile Include="cudaCode.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseStepper.cpp" />
@@ -180,6 +180,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   <ItemGroup>
     <ClInclude Include="BaseStepper.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cudaCode.cuh" />
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementMesh.h" />
     <ClInclude Include="extra.h" />
