@@ -1,4 +1,4 @@
-#include "NewtonStepperCusp.h"
+#include "NewtonSolverCusp.h"
 
 // general cuda includes
 #include "cuda_runtime.h"
@@ -15,9 +15,69 @@
 #include <cusp/monitor.h>
 
 
-std::vector<float> NewtonStepperCusp::step(std::vector<int> I, std::vector<int> J, std::vector<float> V, std::vector<float> force)
+std::vector<float> NewtonSolverCusp::step(std::vector<int> &stdI, std::vector<int> &stdJ, std::vector<float> &stdV, std::vector<float> &stdForce)
 {
-	return std::vector<float>();
+	int num_triplets = stdI.size();
+
+	cusp::array1d<int,   cusp::device_memory> I(num_triplets);  // row indices
+    cusp::array1d<int,   cusp::device_memory> J(num_triplets);  // column indices
+    cusp::array1d<float, cusp::device_memory> V(num_triplets);  // values
+	
+	for (int index = 0; index < num_triplets; ++index)
+	{
+		I[index] = stdI[index];
+		J[index] = stdJ[index];
+		V[index] = stdV[index];
+	}
+
+	thrust::stable_sort_by_key(J.begin(), J.end(), thrust::make_zip_iterator(thrust::make_tuple(I.begin(), V.begin())));
+    thrust::stable_sort_by_key(I.begin(), I.end(), thrust::make_zip_iterator(thrust::make_tuple(J.begin(), V.begin())));
+	
+	int num_entries = thrust::inner_product(thrust::make_zip_iterator(thrust::make_tuple(I.begin(), J.begin())),
+                                            thrust::make_zip_iterator(thrust::make_tuple(I.end (),  J.end()))   - 1,
+                                            thrust::make_zip_iterator(thrust::make_tuple(I.begin(), J.begin())) + 1,
+                                            int(0),
+                                            thrust::plus<int>(),
+                                            thrust::not_equal_to< thrust::tuple<int,int> >()) + 1;
+
+	int num_rows = stdForce.size();
+	int num_cols = stdForce.size();
+
+	cusp::coo_matrix<int, float, cusp::device_memory> K(num_rows, num_cols, num_entries);
+
+    thrust::reduce_by_key(thrust::make_zip_iterator(thrust::make_tuple(I.begin(), J.begin())),
+                          thrust::make_zip_iterator(thrust::make_tuple(I.end(),   J.end())),
+                          V.begin(),
+                          thrust::make_zip_iterator(thrust::make_tuple(K.row_indices.begin(), K.column_indices.begin())),
+                          K.values.begin(),
+                          thrust::equal_to< thrust::tuple<int,int> >(),
+                          thrust::plus<float>());
+
+	cusp::array1d<float, cusp::device_memory> x(K.num_rows, 0);
+    cusp::array1d<float, cusp::device_memory> f(K.num_rows);
+
+	for (int ii = 0; ii < K.num_rows; ++ii)
+	{
+		f[ii] = stdForce[ii];
+	}
+
+	// set stopping criteria:
+    //  iteration_limit    = 100
+    //  relative_tolerance = 1e-3
+    //cusp::verbose_monitor<float> monitor(f, 100, 1e-3);
+
+	// set preconditioner (identity)
+	cusp::identity_operator<float, cusp::device_memory> M(K.num_rows, K.num_rows);
+	
+	cusp::krylov::cg(K,x,f);
+
+	std::vector<float> deltaX(K.num_rows);
+	for (int ii = 0; ii < K.num_rows; ++ii)
+	{
+		deltaX[ii] = x[ii];
+	}
+
+	return deltaX;
 }
 
 //NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)

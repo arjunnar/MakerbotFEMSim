@@ -16,7 +16,7 @@
 #include "BaseStepper.h"
 #include "GradientDescentStepper.h"
 #include "NewtonMethodStepper.h"
-#include "NewtonStepperCusp.h"
+#include "NewtonSolverCusp.h"
 
 // cusp 
 #include <cusp/coo_matrix.h>
@@ -33,7 +33,7 @@ int maxIters = 10000;
 float cubeSize = 0.1f;
 bool stepModeOn = false;
 bool doStep = false; 
-bool useNewtonCusp = false;
+bool useNewtonCusp = true;
 
 namespace
 {
@@ -81,7 +81,7 @@ namespace
 			int numTriplets = tripletListEigen.size();
 			std::vector<int> I(numTriplets);
 			std::vector<int> J(numTriplets);
-			std::vector<int> V(numTriplets);
+			std::vector<float> V(numTriplets);
 
 			for (int tripletI = 0; tripletI < numTriplets; ++tripletI)
 			{
@@ -94,12 +94,37 @@ namespace
 			// get total force vector 
 			Eigen::VectorXf totalForceVector = NewtonMethodStepper::getTotalForceVector(mesh);
 
-			// convert total force vector to an array
+			// convert total force vector to a std::vector
 			std::vector<float>totalForceArr(totalForceVector.rows());
 			for (int ii = 0; ii < totalForceVector.rows(); ++ii)
 			{
 				totalForceArr[ii] = totalForceVector(ii);
 			}
+
+			std::vector<float> stdDelX = NewtonSolverCusp::step(I, J, V, totalForceArr);
+
+			Eigen::VectorXf deltaX(stdDelX.size());
+			for (int ii = 0; ii < stdDelX.size(); ++ii)
+			{
+				deltaX(ii) = stdDelX[ii];
+			}
+
+			// UPDATE MESH COORDS
+			std:vector<int> nonFixedIndexes;
+			for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
+			{
+				if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
+				{
+					nonFixedIndexes.push_back(sharedCoordI);
+				}
+			}
+
+			for (int ii = 0; ii < mesh->getNumNonFixedVertices(); ++ii)
+			{
+				int sharedCoordIndex = nonFixedIndexes[ii];
+				mesh->coords[sharedCoordIndex] += 0.01 * deltaX.block(3*ii, 0, 3, 1);
+			}
+
 
 		}
 
