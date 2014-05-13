@@ -2,14 +2,6 @@
 
 NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh, bool useSparse) : BaseStepper(mesh)
 {
-	totalExternalForce = Eigen::Vector3f::Zero();
-	Eigen::Vector3f force(-0.02, -0.05,0);
-	mesh->externalForcesPerVertex.push_back(force);
-	for (int i = 0; i < mesh->externalForcesPerVertex.size(); ++i)
-	{
-		totalExternalForce += mesh->externalForcesPerVertex[i];
-	}
-
 	this->useSparse = useSparse;
 }
 
@@ -77,7 +69,7 @@ Eigen::MatrixXf NewtonMethodStepper::denseStiffMat(ElementMesh * mesh)
 	return newK;
 }
 
-SparseMatrix NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
+std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 {
 	int numNonFixedVertices = mesh->getNumNonFixedVertices();
 	std::vector<Triplet> tripletsK;
@@ -152,20 +144,14 @@ SparseMatrix NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 		++nRowsNonFixed;
 	}
 
-	SparseMatrix newK(3*numNonFixedVertices, 3*numNonFixedVertices);;
-	newK.setFromTriplets(tripletsNewK.begin(), tripletsNewK.end());
-	tripletsNewK.clear();
-
-	return newK;
+	return tripletsNewK;
 }
 
-void NewtonMethodStepper::step()
+Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 {
-	std::cout << "Taking Newton's Method step" << std::endl;
-	float stepSize = 0.01f; // TODO: Needs to be adaptively determined
-
-	int numNonFixedVertices = 0;
-	std::vector<int> nonFixedIndexes; 
+	Eigen::Vector3f totalExternalForce(-0.02, -0.05,0);
+	
+	int numNonFixedVertices = mesh->getNumNonFixedVertices();
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
 	totalForceVector.setZero();
 
@@ -174,12 +160,9 @@ void NewtonMethodStepper::step()
 	{
 		if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
 		{
-			++numNonFixedVertices;
-			nonFixedIndexes.push_back(sharedCoordI);
-
 			if (sharedCoordI >= 72)//11*11*39 )//25*16)
 			{
-				totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce;  // TODO
+				totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce; 
 			}
 		}
 
@@ -228,25 +211,47 @@ void NewtonMethodStepper::step()
 		newForce.block(3*nonFixedCount, 0, 3, 1) += totalForceVector.block(3*ii, 0, 3, 1);
 		++nonFixedCount;
 	}
+
+	return newForce;
+}
+
+void NewtonMethodStepper::step()
+{
+	std::cout << "Taking Newton's Method step" << std::endl;
+	float stepSize = 0.01f; // TODO: Needs to be adaptively determined
+	std::vector<int> nonFixedIndexes;
+
+	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
+	{
+		if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
+		{
+			nonFixedIndexes.push_back(sharedCoordI);
+		}
+	}
+
+	Eigen::VectorXf force = NewtonMethodStepper::getTotalForceVector(this->mesh);
+	Eigen::VectorXf deltaX(3*mesh->getNumNonFixedVertices());
 	
-	// SOLVE FOR DELTA X USING SPARSE OR DENSE SOLVER
-	Eigen::VectorXf deltaX(3*numNonFixedVertices);
 	if (this->useSparse)
 	{
-		SparseMatrix K = NewtonMethodStepper::sparseStiffMat(this->mesh);
+		std::vector<Triplet> tripletList = NewtonMethodStepper::sparseStiffMat(this->mesh);
+		SparseMatrix K(3*mesh->getNumNonFixedVertices(), 3*mesh->getNumNonFixedVertices());
+		K.setFromTriplets(tripletList.begin(), tripletList.end());
+		tripletList.clear();
+
 		Eigen::ConjugateGradient<SparseMatrix> cg;
 		cg.compute(K);
-		deltaX = cg.solve(newForce);
+		deltaX = cg.solve(force);
 	}
 
 	else 
 	{
 		Eigen::MatrixXf K = NewtonMethodStepper::denseStiffMat(this->mesh);
-		deltaX = K.colPivHouseholderQr().solve(newForce);
+		deltaX = K.colPivHouseholderQr().solve(force);
 	}
 
 	// UPDATE MESH COORDS
-	for (int ii = 0; ii < numNonFixedVertices; ++ii)
+	for (int ii = 0; ii < mesh->getNumNonFixedVertices(); ++ii)
 	{
 		int sharedCoordIndex = nonFixedIndexes[ii];
 		mesh->coords[sharedCoordIndex] += stepSize * deltaX.block(3*ii, 0, 3, 1);

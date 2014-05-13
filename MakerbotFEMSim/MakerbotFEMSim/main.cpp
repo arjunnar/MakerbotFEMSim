@@ -18,6 +18,10 @@
 #include "NewtonMethodStepper.h"
 #include "NewtonStepperCusp.h"
 
+// cusp 
+#include <cusp/coo_matrix.h>
+#include <cusp/print.h>
+
 // test code
 #include "cudaCode.cuh"
 
@@ -71,6 +75,31 @@ namespace
 			// Thus, we have to do some preprocessing before calling the NewtonStepperCusp
 			
 			// get sparse stiffness matrix for entire mesh 
+			std::vector<Triplet> tripletListEigen = NewtonMethodStepper::sparseStiffMat(mesh);
+			
+			// convert K into I, J, and V std vectors
+			int numTriplets = tripletListEigen.size();
+			std::vector<int> I(numTriplets);
+			std::vector<int> J(numTriplets);
+			std::vector<int> V(numTriplets);
+
+			for (int tripletI = 0; tripletI < numTriplets; ++tripletI)
+			{
+				Triplet trip = tripletListEigen[tripletI];
+				I[tripletI] = trip.row();
+				J[tripletI] = trip.col();
+				V[tripletI] = trip.value();
+			}
+
+			// get total force vector 
+			Eigen::VectorXf totalForceVector = NewtonMethodStepper::getTotalForceVector(mesh);
+
+			// convert total force vector to an array
+			std::vector<float>totalForceArr(totalForceVector.rows());
+			for (int ii = 0; ii < totalForceVector.rows(); ++ii)
+			{
+				totalForceArr[ii] = totalForceVector(ii);
+			}
 
 		}
 

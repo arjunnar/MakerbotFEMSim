@@ -14,11 +14,12 @@ class NewtonMethodStepper : public BaseStepper
 public:
 	NewtonMethodStepper(ElementMesh * mesh, bool useSparse);
 	void step();
-	static SparseMatrix sparseStiffMat(ElementMesh * mesh);
+	
+	static std::vector<Triplet> sparseStiffMat(ElementMesh * mesh);
 	static Eigen::MatrixXf denseStiffMat(ElementMesh * mesh);
+	static Eigen::VectorXf getTotalForceVector(ElementMesh * mesh);
 
 private:
-	Eigen::Vector3f totalExternalForce;
 	bool useSparse;
 };
 

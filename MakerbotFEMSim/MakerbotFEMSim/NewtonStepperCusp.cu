@@ -15,6 +15,11 @@
 #include <cusp/monitor.h>
 
 
+std::vector<float> NewtonStepperCusp::step(std::vector<int> I, std::vector<int> J, std::vector<float> V, std::vector<float> force)
+{
+	return std::vector<float>();
+}
+
 //NewtonMethodStepper::NewtonMethodStepper(ElementMesh * mesh) : BaseStepper(mesh)
 //{
 	/*

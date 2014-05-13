@@ -1,9 +1,8 @@
 //#include "ElementMesh.h"
-
+#include <vector>
 class NewtonStepperCusp
 {
 
 public:
-	//NewtonStepper(ElementMesh * mesh);
-	//void step();
+	std::vector<float> step(std::vector<int> I, std::vector<int> J, std::vector<float> V, std::vector<float> force);
 };
