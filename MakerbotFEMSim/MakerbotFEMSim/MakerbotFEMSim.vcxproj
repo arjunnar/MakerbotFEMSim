@@ -152,6 +152,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="cudaCode.cu" />
+    <CudaCompile Include="NewtonStepperCusp.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseStepper.cpp" />
@@ -186,6 +187,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="extra.h" />
     <ClInclude Include="NeoHookeanModel.h" />
     <ClInclude Include="NewtonMethodStepper.h" />
+    <ClInclude Include="NewtonStepperCusp.h" />
     <ClInclude Include="Quadrature.h" />
     <ClInclude Include="HexElement.h" />
     <ClInclude Include="HexRendering.h" />

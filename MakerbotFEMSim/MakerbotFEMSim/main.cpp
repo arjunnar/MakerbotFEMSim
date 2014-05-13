@@ -16,7 +16,9 @@
 #include "BaseStepper.h"
 #include "GradientDescentStepper.h"
 #include "NewtonMethodStepper.h"
+#include "NewtonStepperCusp.h"
 
+// test code
 #include "cudaCode.cuh"
 
 using namespace std;
@@ -28,6 +30,7 @@ int maxIters = 10000;
 float cubeSize = 0.1f;
 bool stepModeOn = false;
 bool doStep = false; 
+bool useNewtonCusp = true;
 
 namespace
 {
@@ -54,7 +57,6 @@ namespace
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
 		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
-
 
 		//stepper = new GradientDescentStepper(mesh);
 		stepper = new NewtonMethodStepper(mesh);
@@ -349,12 +351,12 @@ void glutInitilization(int argc, char* argv[])
 int main( int argc, char* argv[] )
 {
 	//testCuspMatAssembly();
-	testCuspCG();
+	//testCuspCG();
 
-	//glutInitilization(argc, argv);
+	glutInitilization(argc, argv);
 
     // Start the main loop.  glutMainLoop never returns.
-	//glutMainLoop();
+	glutMainLoop();
 
     return 0;	// This line is never reached.
 }
