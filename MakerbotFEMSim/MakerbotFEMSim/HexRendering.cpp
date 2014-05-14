@@ -50,6 +50,12 @@ void HexRendering::drawHexMesh(ElementMesh * mesh)
 	}
 }
 
+void HexRendering::drawHexMeshWithStress(ElementMesh * mesh)
+{
+	
+}
+
+
 // helper functions 
 void HexRendering::drawLine(Eigen::Vector3f x0, Eigen::Vector3f x1)
 {

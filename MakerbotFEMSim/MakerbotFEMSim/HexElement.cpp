@@ -103,6 +103,7 @@ Eigen::Matrix3f HexElement::defGradAtQuadPoint(std::vector<Eigen::Vector3f> defo
 Eigen::Vector3f HexElement::getForce(std::vector<Eigen::Vector3f> deformedCoords, int vertexIndex)
 {
 	Eigen::Vector3f force = Eigen::Vector3f(0,0,0);
+
 	for (int jj = 0; jj < NVERT; ++jj)
 	{
 		Eigen::Vector3f quadPoint = quadrature.gaussCubePoints[jj];
@@ -111,6 +112,7 @@ Eigen::Vector3f HexElement::getForce(std::vector<Eigen::Vector3f> deformedCoords
 		Eigen::Vector3f shapeFuncGrad = getShapeFuncGrad(quadPoint, vertexIndex);
 		//std::cout << "Shape func gradient: " << shapeFuncGrad << std::endl;
 		Eigen::Matrix3f PK1 = NeoHookeanModel::firstPiolaStress(defGrad);
+
 		//std::cout << "PK1: " << PK1 << std::endl;
 		Eigen::Vector3f referenceDiagonal = (refPoints[7] - refPoints[0]);
 		float refVolume = referenceDiagonal(0) * referenceDiagonal(1) * referenceDiagonal(2);

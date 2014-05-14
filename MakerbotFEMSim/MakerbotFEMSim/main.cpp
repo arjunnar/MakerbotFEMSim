@@ -11,8 +11,9 @@
 #include "MeshBuilder.h"
 #include "HexRendering.h"
 #include "voxelizer/include/Voxel.hpp"
+#include "Quadrature.h"
 
-// steppers
+//integration
 #include "BaseStepper.h"
 #include "GradientDescentStepper.h"
 #include "NewtonMethodStepper.h"
@@ -30,9 +31,9 @@ using namespace std;
 
 // globals
 int numIters = 0;
-int maxIters = 10000;
+int maxIters = 1000;
 float cubeSize = 0.1f;
-bool stepModeOn = true;
+bool stepModeOn = false;
 bool doStep = false; 
 bool useNewtonCusp = true;
 
@@ -60,16 +61,42 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
-		mesh = MeshBuilder::buildGenericCubeMesh(5,16,5, cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
 
 		//stepper = new GradientDescentStepper(mesh);
 		stepper = new NewtonMethodStepper(mesh, true);
-
     }
 
+	std::vector<Eigen::Matrix3f> computeCauchyStresses(ElementMesh * mesh)
+	{
+		Quadrature quadrature;
+		std::vector<Eigen::Matrix3f> stressVals(mesh->elements.size());
+		for (int elementI = 0; elementI < mesh->elements.size(); ++elementI)
+		{
+			HexElement * elem = (HexElement*) mesh->elements[elementI];
+			std::vector<Eigen::Vector3f> elemDeformedCoords; 
+
+			for (int ii = 0; ii < elem->vertices.size(); ++ii)
+			{
+				elemDeformedCoords.push_back(mesh->coords[elem->vertices[ii]]);
+			}
+
+			// compute cauchy stress 
+			for (int jj = 0; jj < NVERT; ++jj)
+			{
+				Eigen::Matrix3f defGradAtQuadPoint = elem->defGradAtQuadPoint(elemDeformedCoords, quadrature.gaussCubePoints[jj]);
+				Eigen::Matrix3f PK1AtQuadPoint = NeoHookeanModel::firstPiolaStress(defGradAtQuadPoint);
+				Eigen::Matrix3f cauchyStressTensor = (PK1AtQuadPoint * defGradAtQuadPoint.transpose())	/ (defGradAtQuadPoint.determinant());
+				stressVals[elementI] = cauchyStressTensor;
+			}
+		}
+
+		return stressVals;
+	}
 
 	void takeStep()
 	{
+		std::vector<float> stressVals(mesh->elements.size());
 		std::cout << "Iteration number: " << numIters << std::endl;
 		if (useNewtonCusp)
 		{
@@ -93,7 +120,6 @@ namespace
 				V[tripletI] = trip.value();
 			}
 
-			// get total force vector 
 			Eigen::VectorXf totalForceVector = NewtonMethodStepper::getTotalForceVector(mesh);
 
 			// convert total force vector to a std::vector

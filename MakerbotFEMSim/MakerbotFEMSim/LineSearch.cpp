@@ -3,7 +3,7 @@
 void LineSearch::advanceMesh(ElementMesh * mesh, Eigen::VectorXf &deltaX)
 {
 	Quadrature quadrature;
-	float stepSize = 1.0f;
+	float stepSize = 0.1f;
 
 	while (true)
 	{
