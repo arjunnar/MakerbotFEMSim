@@ -17,6 +17,7 @@
 #include "GradientDescentStepper.h"
 #include "NewtonMethodStepper.h"
 #include "NewtonSolverCusp.h"
+#include "LineSearch.h"
 
 // cusp 
 #include <cusp/coo_matrix.h>
@@ -33,7 +34,7 @@ int maxIters = 10000;
 float cubeSize = 0.1f;
 bool stepModeOn = true;
 bool doStep = false; 
-bool useNewtonCusp = false;
+bool useNewtonCusp = true;
 
 namespace
 {
@@ -69,6 +70,7 @@ namespace
 
 	void takeStep()
 	{
+		std::cout << "Iteration number: " << numIters << std::endl;
 		if (useNewtonCusp)
 		{
 			// You can't use the Eigen library from a .cu file. 
@@ -108,22 +110,10 @@ namespace
 			{
 				deltaX(ii) = stdDelX[ii];
 			}
-
+			
 			// UPDATE MESH COORDS
-			std:vector<int> nonFixedIndexes;
-			for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
-			{
-				if (mesh->fixedVertexIndexes.count(sharedCoordI) == 0)
-				{
-					nonFixedIndexes.push_back(sharedCoordI);
-				}
-			}
-
-			for (int ii = 0; ii < mesh->getNumNonFixedVertices(); ++ii)
-			{
-				int sharedCoordIndex = nonFixedIndexes[ii];
-				mesh->coords[sharedCoordIndex] += 0.1* deltaX.block(3*ii, 0, 3, 1);
-			}
+			LineSearch::advanceMesh(mesh, deltaX);
+			
 		}
 
 		else 
@@ -138,7 +128,6 @@ namespace
 	{
 		if (numIters < maxIters)
 		{
-			std::cout << "Iteration number: " << numIters << std::endl;
 			if (stepModeOn)
 			{
 				if (doStep)

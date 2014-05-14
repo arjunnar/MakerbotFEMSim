@@ -7,7 +7,7 @@
 class LineSearch
 {
 public:
-	static void advanceMesh(ElementMesh * mesh, Eigen::VectorXf deltaX);
+	static void advanceMesh(ElementMesh * mesh, Eigen::VectorXf &deltaX);
 
 private:
 	static void addDeltaX(ElementMesh * mesh, Eigen::VectorXf &deltaX, float stepSize);

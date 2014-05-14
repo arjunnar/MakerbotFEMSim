@@ -159,6 +159,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Element.cpp" />
     <ClCompile Include="ElementMesh.cpp" />
+    <ClCompile Include="LineSearch.cpp" />
     <ClCompile Include="NeoHookeanModel.cpp" />
     <ClCompile Include="NewtonMethodStepper.cpp" />
     <ClCompile Include="Quadrature.cpp" />
@@ -185,6 +186,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="Element.h" />
     <ClInclude Include="ElementMesh.h" />
     <ClInclude Include="extra.h" />
+    <ClInclude Include="LineSearch.h" />
     <ClInclude Include="NeoHookeanModel.h" />
     <ClInclude Include="NewtonMethodStepper.h" />
     <ClInclude Include="NewtonSolverCusp.h" />

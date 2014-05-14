@@ -260,9 +260,5 @@ void NewtonMethodStepper::step()
 	}
 
 	// UPDATE MESH COORDS
-	for (int ii = 0; ii < mesh->getNumNonFixedVertices(); ++ii)
-	{
-		int sharedCoordIndex = nonFixedIndexes[ii];
-		mesh->coords[sharedCoordIndex] += stepSize * deltaX.block(3*ii, 0, 3, 1);
-	}
+	LineSearch::advanceMesh(mesh, deltaX);
 }

@@ -1,12 +1,13 @@
 #include "LineSearch.h"
 
-void LineSearch::advanceMesh(ElementMesh * mesh, Eigen::VectorXf deltaX)
+void LineSearch::advanceMesh(ElementMesh * mesh, Eigen::VectorXf &deltaX)
 {
 	Quadrature quadrature;
 	float stepSize = 1.0f;
 
 	while (true)
 	{
+		std::cout << "line search step size: " << stepSize << std::endl;
 		// try advancing mesh 
 		addDeltaX(mesh, deltaX, stepSize);
 
