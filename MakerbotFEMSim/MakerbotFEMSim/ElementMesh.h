@@ -19,12 +19,12 @@ public:
 	std::vector<Eigen::Vector3f> externalForcesPerVertex;
 	
 	std::set<int> fixedVertexIndexes;
-	
-	int getNumNonFixedVertices();
 
 	std::vector<int> originalToNewIndexes; 
 
 	void buildStiffnessIndexHelper();
+
+	int getNumNonFixedVertices();
 
 };
 
