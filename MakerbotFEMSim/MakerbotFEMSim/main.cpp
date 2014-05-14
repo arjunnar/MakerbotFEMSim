@@ -31,9 +31,9 @@ using namespace std;
 int numIters = 0;
 int maxIters = 10000;
 float cubeSize = 0.1f;
-bool stepModeOn = false;
+bool stepModeOn = true;
 bool doStep = false; 
-bool useNewtonCusp = true;
+bool useNewtonCusp = false;
 
 namespace
 {
@@ -59,7 +59,7 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
-		mesh = MeshBuilder::buildGenericCubeMesh(8,32,8, cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(5,16,5, cubeSize, refPoints);
 
 		//stepper = new GradientDescentStepper(mesh);
 		stepper = new NewtonMethodStepper(mesh, true);
@@ -113,7 +113,7 @@ namespace
 			std:vector<int> nonFixedIndexes;
 			for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 			{
-				if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
+				if (mesh->fixedVertexIndexes.count(sharedCoordI) == 0)
 				{
 					nonFixedIndexes.push_back(sharedCoordI);
 				}
@@ -122,7 +122,7 @@ namespace
 			for (int ii = 0; ii < mesh->getNumNonFixedVertices(); ++ii)
 			{
 				int sharedCoordIndex = nonFixedIndexes[ii];
-				mesh->coords[sharedCoordIndex] += 0.01 * deltaX.block(3*ii, 0, 3, 1);
+				mesh->coords[sharedCoordIndex] += 0.1* deltaX.block(3*ii, 0, 3, 1);
 			}
 		}
 

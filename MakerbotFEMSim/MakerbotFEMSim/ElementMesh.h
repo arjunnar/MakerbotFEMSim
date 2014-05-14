@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <Eigen/Core>
+#include <iostream>
 
 class ElementMesh
 {
@@ -17,12 +18,13 @@ public:
 
 	std::vector<Eigen::Vector3f> externalForcesPerVertex;
 	
-	std::set<int> sharedIndexBase;
+	std::set<int> fixedVertexIndexes;
 	
 	int getNumNonFixedVertices();
 
-private:
-	int numNonFixedVertices;
+	std::vector<int> originalToNewIndexes; 
+
+	void buildStiffnessIndexHelper();
 
 };
 

@@ -3,24 +3,37 @@
 
 ElementMesh::ElementMesh(void)
 {
-	numNonFixedVertices = -1;
+	
+}
+
+void ElementMesh::buildStiffnessIndexHelper()
+{
+	originalToNewIndexes = std::vector<int>(3*coords.size());
+	int numVerticesNotFixed = 0;
+	for (int ii = 0; ii < coords.size(); ++ii)
+	{
+		if (fixedVertexIndexes.count(ii) == 0)
+		{
+			// vertex isn't fixed
+			originalToNewIndexes[3*ii] = 3*numVerticesNotFixed;
+			originalToNewIndexes[3*ii+1] = 3*numVerticesNotFixed+1;
+			originalToNewIndexes[3*ii+2] = 3*numVerticesNotFixed+2;
+			++numVerticesNotFixed;
+		}
+
+		else 
+		{
+			// vertex is fixed 
+			originalToNewIndexes[3*ii] = -1;
+			originalToNewIndexes[3*ii+1] = -1;
+			originalToNewIndexes[3*ii+2] = -1;
+		}
+	}
 }
 
 int ElementMesh::getNumNonFixedVertices()
 {
-	if (numNonFixedVertices = -1)
-	{
-		numNonFixedVertices = 0;
-		for (int sharedCoordI = 0; sharedCoordI < coords.size(); ++sharedCoordI)
-		{
-			if (sharedIndexBase.count(sharedCoordI) == 0)
-			{
-				++numNonFixedVertices;
-			}
-		}
-	}
-
-	return numNonFixedVertices;
+	return coords.size() - fixedVertexIndexes.size();
 }
 
 

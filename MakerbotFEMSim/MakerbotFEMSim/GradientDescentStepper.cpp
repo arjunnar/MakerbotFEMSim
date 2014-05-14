@@ -20,7 +20,7 @@ void GradientDescentStepper::step()
 
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
-		if (mesh->sharedIndexBase.count(sharedCoordI) > 0 || sharedCoordI < 72)
+		if (mesh->fixedVertexIndexes.count(sharedCoordI) > 0 || sharedCoordI < 72)
 		{
 			totalForceVector.block(3*sharedCoordI, 0, 3, 1) = Eigen::Vector3f::Zero();
 		}
@@ -44,7 +44,7 @@ void GradientDescentStepper::step()
 		for (int ii = 0; ii < elem->vertices.size(); ++ii)
 		{
 			int sharedCoordIndex = elem->vertices[ii];
-			if (mesh->sharedIndexBase.count(sharedCoordIndex) > 0)
+			if (mesh->fixedVertexIndexes.count(sharedCoordIndex) > 0)
 			{
 				continue;
 			}
@@ -58,7 +58,7 @@ void GradientDescentStepper::step()
 	{
 		Eigen::Vector3f force = totalForceVector.block(3*sharedCoordI, 0, 3, 1);
 
-		if (mesh->sharedIndexBase.count(sharedCoordI) > 0)
+		if (mesh->fixedVertexIndexes.count(sharedCoordI) > 0)
 		{
 			continue;
 		}

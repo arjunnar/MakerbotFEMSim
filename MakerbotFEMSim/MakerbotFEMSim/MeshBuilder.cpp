@@ -155,7 +155,8 @@ ElementMesh* MeshBuilder::buildGenericCubeMesh(int numXDim, int numYDim, int num
 	ElementMesh * mesh = new ElementMesh();
 	mesh->coords = zCoords;
 	mesh->elements = elements;
-    mesh->sharedIndexBase = sharedIndexBase;
+	mesh->fixedVertexIndexes = sharedIndexBase;
+	mesh->buildStiffnessIndexHelper();
 
 	return mesh;
 }

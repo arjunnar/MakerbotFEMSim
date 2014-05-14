@@ -45,7 +45,7 @@ Eigen::MatrixXf NewtonMethodStepper::denseStiffMat(ElementMesh * mesh)
 	int nRowsNonFixed = 0;
 	for (int rowI = 0; rowI < mesh->coords.size(); ++rowI)
 	{
-		if (mesh->sharedIndexBase.count(rowI) > 0)
+		if (mesh->fixedVertexIndexes.count(rowI) > 0)
 		{
 			continue;
 		}
@@ -53,7 +53,7 @@ Eigen::MatrixXf NewtonMethodStepper::denseStiffMat(ElementMesh * mesh)
 		int nColsNonFixed = 0;
 		for (int colI = 0; colI < mesh->coords.size(); ++colI)
 		{
-			if (mesh->sharedIndexBase.count(colI) > 0)
+			if (mesh->fixedVertexIndexes.count(colI) > 0)
 			{
 				continue;
 			}
@@ -72,6 +72,7 @@ Eigen::MatrixXf NewtonMethodStepper::denseStiffMat(ElementMesh * mesh)
 std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 {
 	int numNonFixedVertices = mesh->getNumNonFixedVertices();
+
 	std::vector<Triplet> tripletsK;
 
 	for (int elementI = 0; elementI < mesh->elements.size(); ++elementI)
@@ -99,9 +100,18 @@ std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 				{
 					for (int c = 0; c < 3; ++c)
 					{
-						if (elementKBlock(r,c) != 0.0f)
+						if (abs(elementKBlock(r,c)) > 1.0e-10)
 						{
-							tripletsK.push_back( Triplet(3*rowSharedCoordIndex + r, 3*colSharedCoordIndex + c, elementKBlock(r,c)) );
+							int I = mesh->originalToNewIndexes[3*rowSharedCoordIndex + r];
+							int J = mesh->originalToNewIndexes[3*colSharedCoordIndex + c];
+
+							if (I == -1 || J == -1)
+							{
+								continue;
+							}
+
+							float val = elementKBlock(r,c);
+							tripletsK.push_back(Triplet(I,J,val));
 						}
 					}
 				}
@@ -109,15 +119,11 @@ std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 		}
 	}
 
-	SparseMatrix K(3*mesh->coords.size(), 3*mesh->coords.size());
-	K.setFromTriplets(tripletsK.begin(), tripletsK.end());
-	tripletsK.clear();
-	std::vector<Triplet> tripletsNewK;
-
+	/*
 	int nRowsNonFixed = 0;
 	for (int rowI = 0; rowI < mesh->coords.size(); ++rowI)
 	{
-		if (mesh->sharedIndexBase.count(rowI) > 0)
+		if (mesh->fixedVertexIndexes.count(rowI) > 0)
 		{
 			continue;
 		}
@@ -125,7 +131,7 @@ std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 		int nColsNonFixed = 0;
 		for (int colI = 0; colI < mesh->coords.size(); ++colI)
 		{
-			if (mesh->sharedIndexBase.count(colI) > 0)
+			if (mesh->fixedVertexIndexes.count(colI) > 0)
 			{
 				continue;
 			}
@@ -134,17 +140,20 @@ std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 			{
 				for (int c = 0; c < 3; ++c)
 				{
+					if (abs(K.coeff(3*rowI + r, 3*colI + c)) < 1e-10)
+						continue;
 					tripletsNewK.push_back( Triplet(3*nRowsNonFixed + r, 3*nColsNonFixed + c, K.coeff(3*rowI + r, 3*colI + c)) );
 				}
 			}
 			
 			++nColsNonFixed;
 		}
-		
+				
 		++nRowsNonFixed;
 	}
+	*/
 
-	return tripletsNewK;
+	return tripletsK;
 }
 
 Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
@@ -158,9 +167,9 @@ Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 	// HANDLE EXTERNAL FORCES
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
-		if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
+		if (mesh->fixedVertexIndexes.count(sharedCoordI) == 0)
 		{
-			if (sharedCoordI >= 72)//11*11*39 )//25*16)
+			if (sharedCoordI >= 6*6*15)//9*9*31)//11*11*39 )//25*16)
 			{
 				totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce; 
 			}
@@ -187,7 +196,7 @@ Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 		{
 			int sharedCoordIndex = elem->vertices[ii];
 			
-			if (mesh->sharedIndexBase.count(sharedCoordIndex) > 0)
+			if (mesh->fixedVertexIndexes.count(sharedCoordIndex) > 0)
 			{
 				continue;
 			}
@@ -203,7 +212,7 @@ Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 	int nonFixedCount = 0;
 	for (int ii = 0; ii < mesh->coords.size(); ++ii)
 	{
-		if (mesh->sharedIndexBase.count(ii) > 0)
+		if (mesh->fixedVertexIndexes.count(ii) > 0)
 		{
 			continue; 
 		}
@@ -223,7 +232,7 @@ void NewtonMethodStepper::step()
 
 	for (int sharedCoordI = 0; sharedCoordI < mesh->coords.size(); ++sharedCoordI)
 	{
-		if (mesh->sharedIndexBase.count(sharedCoordI) == 0)
+		if (mesh->fixedVertexIndexes.count(sharedCoordI) == 0)
 		{
 			nonFixedIndexes.push_back(sharedCoordI);
 		}
