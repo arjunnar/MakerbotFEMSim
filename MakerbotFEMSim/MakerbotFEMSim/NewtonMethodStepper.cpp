@@ -159,8 +159,11 @@ std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 {
 	Quadrature quadrature;
-	Eigen::Vector3f totalExternalForce(0.05, 0.00, 0);
-	
+	//Eigen::Vector3f totalExternalForce(0.0f, -0.073469, 0);
+	//Eigen::Vector3f totalExternalForce(0.0f, -0.126837, 0);
+	//Eigen::Vector3f totalExternalForce(0.0f, -0.181633, 0);
+	Eigen::Vector3f totalExternalForce(0.0f, -0.321429, 0);
+
 	int numNonFixedVertices = mesh->getNumNonFixedVertices();
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
 	totalForceVector.setZero();
@@ -170,7 +173,7 @@ Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 	{
 		if (mesh->fixedVertexIndexes.count(sharedCoordI) == 0)
 		{
-			if (sharedCoordI >= 72)//21*21*46)//9*9*31)//11*11*39 )//25*16)
+			if (sharedCoordI >= 20*20*10)//21*21*46)//9*9*31)//11*11*39 )//25*16)
 			{
 				totalForceVector.block(3*sharedCoordI, 0, 3, 1) = totalExternalForce; 
 			}

@@ -28,9 +28,9 @@ void HexRendering::drawHexMesh(ElementMesh * mesh)
 		Eigen::Vector3f coord6 = mesh->coords[elem->vertices[6]];
 		Eigen::Vector3f coord7 = mesh->coords[elem->vertices[7]];
 	
-		glPushMatrix();
-		glDisable(GL_LIGHTING);
-		glColor3f(1.0f, 1.0f, 1.0f);
+		//glPushMatrix();
+		//glDisable(GL_LIGHTING);
+		//glColor3f(1.0f, 1.0f, 1.0f);
 
 		// left face
 		drawLine(coord0, coord1);
@@ -52,8 +52,8 @@ void HexRendering::drawHexMesh(ElementMesh * mesh)
 		drawLine(coord0, coord4);
 		drawLine(coord1, coord5);
 		
-		glPopMatrix();
-		glEnable(GL_LIGHTING);
+		//glPopMatrix();
+		//glEnable(GL_LIGHTING);
 	}
 }
 

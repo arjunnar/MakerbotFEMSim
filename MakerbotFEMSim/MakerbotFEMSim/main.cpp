@@ -31,8 +31,8 @@ using namespace std;
 
 // globals
 int numIters = 0;
-int maxIters = 1000;
-float cubeSize = 0.1f;
+int maxIters = 10000;
+float cubeSize = 0.0019939;
 bool stepModeOn = false;
 bool doStep = false; 
 bool useNewtonCusp = true;
@@ -63,7 +63,9 @@ namespace
 		refPoints.push_back(refPoints[0] + Eigen::Vector3f(cubeSize, cubeSize, cubeSize));
 
 		//mesh = MeshBuilder::buildGenericCubeMesh(1,2,1,cubeSize, refPoints);
-		mesh = MeshBuilder::buildGenericCubeMesh(2,8,2, cubeSize, refPoints);
+		mesh = MeshBuilder::buildGenericCubeMesh(19,10, 19, cubeSize, refPoints);
+		
+		std::cout << "Coord 4190 initially: " <<  mesh->coords[4190] << std::endl;
 
 		//stepper = new GradientDescentStepper(mesh);
 		stepper = new NewtonMethodStepper(mesh, true);
@@ -142,6 +144,8 @@ namespace
 			// UPDATE MESH COORDS
 			LineSearch::advanceMesh(mesh, deltaX);
 			
+			std::cout << "Coord 4190 after step: " <<  mesh->coords[4190] << std::endl;
+			
 		}
 
 		else 
@@ -183,8 +187,8 @@ namespace
      void drawSystem()
 	 {
 		 HexRendering::drawHexMesh(mesh);
-		 std::vector<Eigen::Matrix3f> cauchyStresses = computeCauchyStresses(mesh);
-		 HexRendering::drawHexMeshWithStress(mesh, cauchyStresses);
+		// std::vector<Eigen::Matrix3f> cauchyStresses = computeCauchyStresses(mesh);
+		// HexRendering::drawHexMeshWithStress(mesh, cauchyStresses);
      }
         
     //-------------------------------------------------------------------
