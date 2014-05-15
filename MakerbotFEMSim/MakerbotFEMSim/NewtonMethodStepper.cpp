@@ -159,7 +159,8 @@ std::vector<Triplet> NewtonMethodStepper::sparseStiffMat(ElementMesh * mesh)
 Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 {
 	Quadrature quadrature;
-    Eigen::Vector3f totalExternalForce(-0.02, -0.05,0);
+	Eigen::Vector3f totalExternalForce(0.05, 0.00, 0);
+	
 	int numNonFixedVertices = mesh->getNumNonFixedVertices();
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
 	totalForceVector.setZero();
@@ -209,7 +210,7 @@ Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 
 	// REMOVE FIXED VERTICES FROM TOTAL FORCE VECTOR
 	Eigen::VectorXf newForce(3*numNonFixedVertices);
-    newForce.setZero();
+	newForce.setZero();
 	int nonFixedCount = 0;
 	for (int ii = 0; ii < mesh->coords.size(); ++ii)
 	{

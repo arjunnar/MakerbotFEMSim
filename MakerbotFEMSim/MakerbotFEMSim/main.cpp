@@ -177,6 +177,7 @@ namespace
 
      void drawSystem()
 	 {
+		 HexRendering::drawHexMesh(mesh);
 		 std::vector<Eigen::Matrix3f> cauchyStresses = computeCauchyStresses(mesh);
 		 HexRendering::drawHexMeshWithStress(mesh, cauchyStresses);
      }
