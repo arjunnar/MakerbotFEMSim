@@ -36,6 +36,8 @@ float cubeSize = 0.1f;
 bool stepModeOn = false;
 bool doStep = false; 
 bool useNewtonCusp = true;
+bool start = false;
+
 
 namespace
 {
@@ -170,7 +172,10 @@ namespace
 
 			else 
 			{
-				takeStep();
+                if (start)
+                {
+				    takeStep();
+                }
 			}
 		}
     }
@@ -221,6 +226,15 @@ namespace
 
 				break;
 			}
+
+            case 'g':
+            {
+                if (!stepModeOn)
+                {
+                    start = true;
+                }
+                break;
+            }
 
             default:
                 cout << "Unhandled key press " << key << "." << endl;
