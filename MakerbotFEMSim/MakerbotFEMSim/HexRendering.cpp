@@ -28,6 +28,10 @@ void HexRendering::drawHexMesh(ElementMesh * mesh)
 		Eigen::Vector3f coord6 = mesh->coords[elem->vertices[6]];
 		Eigen::Vector3f coord7 = mesh->coords[elem->vertices[7]];
 	
+		glPushMatrix();
+		glDisable(GL_LIGHTING);
+		glColor3f(1.0f, 1.0f, 1.0f);
+
 		// left face
 		drawLine(coord0, coord1);
 		drawLine(coord1, coord3);
@@ -47,11 +51,40 @@ void HexRendering::drawHexMesh(ElementMesh * mesh)
 		// bottom face connections
 		drawLine(coord0, coord4);
 		drawLine(coord1, coord5);
+		
+		glPopMatrix();
+		glEnable(GL_LIGHTING);
 	}
 }
 
 void HexRendering::drawHexMeshWithStress(ElementMesh * mesh, std::vector<Eigen::Matrix3f> &cauchyStressTensors)
 {
+	float minRed = std::numeric_limits<float>::infinity();
+	float maxRed = -1;
+
+	float minBlue = std::numeric_limits<float>::infinity();
+	float maxBlue = -1;
+
+	float minGreen = std::numeric_limits<float>::infinity();
+	float maxGreen = -1;
+
+	for (int ii = 0; ii < cauchyStressTensors.size(); ++ii)
+	{
+		Eigen::Matrix3f cauchyStress = cauchyStressTensors[ii];
+		float r = cauchyStress.row(0).transpose().norm();
+		float g = cauchyStress.row(1).transpose().norm();
+		float b = cauchyStress.row(2).transpose().norm();
+
+		minRed = min(r, minRed);
+		maxRed = max(r, maxRed);
+
+		minBlue = min(b, minBlue);
+		maxBlue = max(b, maxBlue);
+
+		minGreen = min(g, minGreen);
+		maxGreen = max(g, maxGreen);
+	}
+
 	for (int elemI = 0; elemI < mesh->elements.size(); ++elemI)
 	{
 		Element * elem = mesh->elements[elemI];
@@ -83,7 +116,12 @@ void HexRendering::drawHexMeshWithStress(ElementMesh * mesh, std::vector<Eigen::
 		float g = sqrt(b1*b1 + b2*b2 + b3*b3);
 		float b = sqrt(g1*g1 + g2*g2 + g3*g3);
 
-		GLfloat materialColor[] = {r, g, b, 1.0f};
+		
+		float rFinal = (r - minRed) / (maxRed - minRed);
+		float gFinal = (g - minGreen) / (maxGreen - minGreen);
+		float bFinal = (b - minBlue) / (maxBlue - minBlue);
+
+		GLfloat materialColor[] = {rFinal, gFinal, bFinal, 1.0f};
 		glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, materialColor);
 
 		// left face
