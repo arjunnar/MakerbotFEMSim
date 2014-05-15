@@ -162,8 +162,9 @@ Eigen::VectorXf NewtonMethodStepper::getTotalForceVector(ElementMesh * mesh)
 	//Eigen::Vector3f totalExternalForce(0.0f, -0.073469, 0);
 	//Eigen::Vector3f totalExternalForce(0.0f, -0.126837, 0);
 	//Eigen::Vector3f totalExternalForce(0.0f, -0.181633, 0);
-	Eigen::Vector3f totalExternalForce(0.0f, -0.321429, 0);
-
+	//Eigen::Vector3f totalExternalForce(0.0f, -0.321429, 0);
+	Eigen::Vector3f totalExternalForce(0.0f, -0.03347, 0);
+	
 	int numNonFixedVertices = mesh->getNumNonFixedVertices();
 	Eigen::VectorXf totalForceVector(3*mesh->coords.size());
 	totalForceVector.setZero();
